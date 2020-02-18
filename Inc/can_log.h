@@ -5,8 +5,8 @@
 #include "main.h"
 #include "stm32f1xx_hal.h"
 //#include "can.h"
-#include "spi.h"
-#include "gpio.h"
+//#include "spi.h"
+//#include "gpio.h"
 #include "fatfs.h"
 //Declaring functions:
 FRESULT SD_Create_File();

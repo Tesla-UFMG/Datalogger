@@ -1,5 +1,11 @@
 #include <master_da_prototipo.h>
-
+CAN_HandleTypeDef hcan;
+CAN_FilterTypeDef sFilterConfig;
+CAN_TxHeaderTypeDef TxHeader;
+CAN_RxHeaderTypeDef RxHeader;
+uint8_t TxData[8];
+uint8_t RxData[8];
+uint32_t TxMailbox;
 I2C_HandleTypeDef hi2c1; //handle do i2c;
 uint16_t addressACEL = 0x68;//endereco do MPU
 uint8_t buffer[6] = {0};

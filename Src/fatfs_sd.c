@@ -333,7 +333,6 @@ Only one type of drive is supported*/
     return STA_NOINIT;
 
 
-
   /*No SD card inserted */
 
   if(Stat & STA_NODISK)
