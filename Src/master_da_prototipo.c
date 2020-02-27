@@ -1,4 +1,6 @@
 #include <master_da_prototipo.h>
+#include <can_log.h>
+#include <string.h>
 CAN_HandleTypeDef hcan;
 CAN_FilterTypeDef sFilterConfig;
 CAN_TxHeaderTypeDef TxHeader;
@@ -14,6 +16,8 @@ int16_t temp;
 uint8_t i;
 uint8_t _accel_ok = 1;
 long int timer = 0, timer1;
+extern char buffer_aux;
+
 
 void SetupACEL(void)
 {
@@ -81,6 +85,8 @@ void recordAccelRegisters()
 	accelX = (accelX / 16384.0)*1000 - 37;
 	accelY = (accelY / 16384.0)*1000 - 21;
 	accelZ = (accelZ / 16384.0)*1000 + 117;
+    sprintf(buffer_aux,"\n\r%d\t%d\t%d\t%d", timer, accelX, accelY, accelZ);
+    balde_caixa();
 }
 
 void recordGyroRegisters(void)

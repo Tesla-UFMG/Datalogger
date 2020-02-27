@@ -28,6 +28,7 @@
 #include "can_log.h"
 #include "fatfs_sd.h"
 #include <stdarg.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,15 +59,11 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 extern CAN_FilterTypeDef sFilterConfig;
 extern CAN_TxHeaderTypeDef TxHeader;
-extern CAN_RxHeaderTypeDef RxHeader;
-extern uint8_t TxData[8];
-extern uint8_t RxData[8];
-extern uint32_t TxMailbox;
 uint8_t vetTx[8] = {0};
-extern int16_t accelX, accelY, accelZ, gyroX, gyroY, gyroZ, temp;
+char buffer_log[512] = {0};
+char buffer_aux[40] = {0};
 extern uint8_t _accel_ok;
-extern uint8_t _datalog_flag;
-
+uint16_t contador = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -124,7 +121,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);
-  HAL_Delay(1000);
+  HAL_Delay(500);
   SetupACEL();
   SD_Create_File();
   /* USER CODE END 2 */
@@ -142,14 +139,9 @@ int main(void)
 		  {
 			  recordAccelRegisters();
 			  recordGyroRegisters();
-			  temperatura();
-			//  HAL_GPIO_TogglePin(LED1_GPIO_Port,LED1_Pin);
+			  HAL_GPIO_TogglePin(LED1_GPIO_Port,LED1_Pin);
 		  }
-		 // UART_print("%d\t%d\t%d\n",accelX, accelY, accelZ);
-	  //HAL_GPIO_TogglePin(LED1_GPIO_Port,LED1_Pin);
-	  //HAL_Delay(50);
-	   writeSD();
-		  //transmit_dados();
+		 writeSD();
   }
   /* USER CODE END 3 */
 }
