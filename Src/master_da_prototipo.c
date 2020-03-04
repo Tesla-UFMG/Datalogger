@@ -1,6 +1,7 @@
 #include <master_da_prototipo.h>
 #include <can_log.h>
 #include <string.h>
+
 CAN_HandleTypeDef hcan;
 CAN_FilterTypeDef sFilterConfig;
 CAN_TxHeaderTypeDef TxHeader;
@@ -17,7 +18,6 @@ uint8_t i;
 uint8_t _accel_ok = 1;
 long int timer = 0, timer1;
 extern char buffer_aux;
-
 
 void SetupACEL(void)
 {

@@ -15,3 +15,6 @@ void writeSD(void);
 void cabecalho(void);
 void balde_caixa(void);
 #endif //END CAN_LOG_H
+
+
+
