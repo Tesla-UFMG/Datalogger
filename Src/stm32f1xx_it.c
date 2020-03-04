@@ -230,7 +230,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   HAL_CAN_IRQHandler(&hcan);
   /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
   HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &RxHeader, RxData);
-  HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+  canMessageReceived(RxHeader.StdId, RxData);
 
   /* USER CODE END USB_LP_CAN1_RX0_IRQn 1 */
 }
