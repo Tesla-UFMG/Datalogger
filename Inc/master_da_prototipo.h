@@ -1,5 +1,6 @@
 #include "main.h"
 #include "stm32f1xx_hal.h"
+#include "strings.h"
 //#include "can.h"
 #include "fatfs.h"
 //#include "i2c.h"

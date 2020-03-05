@@ -13,4 +13,8 @@ FRESULT SD_Create_File();
 void canMessageReceived(uint16_t id,uint8_t* data);
 void writeSD(void);
 void cabecalho(void);
+void balde_caixa(void);
 #endif //END CAN_LOG_H
+
+
+
