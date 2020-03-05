@@ -202,6 +202,7 @@ void writeSD(void)
 	UINT bytes_written;
 	FRESULT fresult;
 	timer = HAL_GetTick();
+
 	UINT len = sprintf(buffer_log, "\r\n%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%d\t%d\t%u\t%u\t%d\t%d\t%u\t%u\t%u\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%d\t%d\t%d\t%d",
 			ECU_Mode,
 			Intensidade_Frenagem,
@@ -271,6 +272,7 @@ void writeSD(void)
 			IRCan[1],
 			IRCan[2],
 			IRCan[3]);
+
 	fresult = f_open(&file, bufferFile, FA_OPEN_ALWAYS | FA_WRITE); //open file on SD card to write
 	fresult = f_lseek(&file, file.fsize);//goes to the end of the file
 	fresult = f_write(&file, buffer_log, len, &bytes_written);     //write data to the file

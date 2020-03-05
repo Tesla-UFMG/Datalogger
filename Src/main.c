@@ -140,6 +140,7 @@ int main(void)
 		  {
 			  recordAccelRegisters();
 			  recordGyroRegisters();
+			  temperatura();
 			  HAL_GPIO_TogglePin(LED1_GPIO_Port,LED1_Pin);
 		  }
 		 writeSD();
