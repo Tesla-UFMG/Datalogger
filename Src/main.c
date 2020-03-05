@@ -143,7 +143,7 @@ int main(void)
 			  recordAccelRegisters();
 			  recordGyroRegisters();
 			  temperatura();
-			//  HAL_GPIO_TogglePin(LED1_GPIO_Port,LED1_Pin);
+			  HAL_GPIO_TogglePin(LED1_GPIO_Port,LED1_Pin);
 		  }
 		 // UART_print("%d\t%d\t%d\n",accelX, accelY, accelZ);
 	  //HAL_GPIO_TogglePin(LED1_GPIO_Port,LED1_Pin);
