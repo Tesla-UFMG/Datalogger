@@ -85,8 +85,6 @@ void recordAccelRegisters()
 	accelX = (accelX / 16384.0)*1000 - 37;
 	accelY = (accelY / 16384.0)*1000 - 21;
 	accelZ = (accelZ / 16384.0)*1000 + 117;
-    sprintf(buffer_aux,"\n\r%d\t%d\t%d\t%d", timer, accelX, accelY, accelZ);
-    balde_caixa();
 }
 
 void recordGyroRegisters(void)

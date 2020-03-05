@@ -41,6 +41,8 @@ FIL file;
 char bufferFile[20];//buffer with the name of the file
 extern char buffer_log[512];
 extern char buffer_aux[40];
+extern int16_t gyroX, gyroY, gyroZ, accelX, accelY, accelZ;
+extern int16_t temp;
 
 
  //DATALOG VARIABLES
@@ -73,159 +75,111 @@ void canMessageReceived(uint16_t id, uint8_t* data)
 		case 1:
 			ECU_Mode = data_word[0];
 			_ecu_flag = data_word[1];
-			sprintf(buffer_aux, "%d\t%d\t", data_word[0],data_word[1]);
-			balde_caixa();
 			break;
 		case 51:
 			current_sensor1_baixa = data_word[0];
 			current_sensor1_alta = data_word[1];
 			current_sensor2 = data_word[2];
 			current_sensor3 = data_word[3];
-			sprintf(buffer_aux, "%d\t%d\t%d\t%d\t", data_word[0],data_word[1],data_word[2],data_word[3]);
-			balde_caixa();
 			break;
 		case 52:
 			TensaoGLV =  data_word[0];
-			sprintf(buffer_aux, "%d\t", data_word[0]);
-			balde_caixa();
 			break;
 		case 53:
 
 			tensaototal = data_word[1];
 			tempmediabb = data_word[2];
 			tempmaxbb = data_word[3];
-			sprintf(buffer_aux, "%d\t%d\t%d\t", data_word[3],data_word[1],data_word[2]);
-			balde_caixa();
 			break;
 		case 101:
 			ECU_Timer = 	data_word[0];
 			Pedal =			data_word[2];
 			Volante = 		data_word[1];
-			sprintf(buffer_aux, "%d\t%d\t%d\t", data_word[0],data_word[1],data_word[2]);
-			balde_caixa();
 			break;
 		case 102:
 			Hodometro_P = data_word[2];
 			Hodometro_T = data_word[3];
-			sprintf(buffer_aux, "%d\t%d\t",data_word[2],data_word[3]);
-			balde_caixa();
 			break;
 		case 103:
 			Torque_ref_R =  data_word[2];
 			Torque_ref_L =  data_word[2];
 			Torque_RM = 	data_word[0];
 			Torque_LM = 	data_word[1];
-			sprintf(buffer_aux, "%d\t%d\t%d\t%d\t", data_word[0],data_word[1],data_word[2],data_word[2]);
-			balde_caixa();
 			break;
 		case 104:
 			V_motor_D = data_word[0];
 			V_motor_E = data_word[1];
 			Intensidade_Frenagem = data_word[2];
-			sprintf(buffer_aux, "%d\t%d\t%d\t", data_word[0],data_word[1],data_word[2]);
-			balde_caixa();
 			break;
 		case 105:
 			Speed_LR = 		data_word[0];
 			Speed_RR = 		data_word[1];
-			sprintf(buffer_aux, "%d\t%d\t", data_word[0],data_word[1]);
-			balde_caixa();
 			break;
 		case 106:
 			GANHO_TORQUE = 	data_word[0];
 			Current_RM = 	data_word[2];
 			Current_LM = 	data_word[3];
-			sprintf(buffer_aux, "%d\t%d\t", data_word[0],data_word[2]);
-			balde_caixa();
 			break;
 		case 107:
 			tempInv_D1 = data_word[0];
 			//tempInv_D2 = data_word[1];
 			tempInv_E1 = data_word[2];
 			//tempInv_E2 = data_word[3];
-			sprintf(buffer_aux, "%d\t%d\t", data_word[0],data_word[2]);
-			balde_caixa();
 			break;
 		case 156:
 			IRCan[0] = data_word[0];
 			IRCan[1] = data_word[1];
 			IRCan[2] = data_word[2];
 			IRCan[3] = data_word[3];
-			sprintf(buffer_aux, "%d\t%d\t%d\t%d\t", data_word[0],data_word[1],data_word[2],data_word[3]);
-			balde_caixa();
 			break;
 		case 170:
 			sensorpressao1=data_word[0];
 			leitura_PotInt =  data_word[1];
 			tempInt =         data_word[2];
-			sprintf(buffer_aux, "%d\t%d\t%d\t", data_word[0],data_word[1],data_word[2]);
-			balde_caixa();
 			break;
 
 		case 171:
 			ext1 = *(uint32_t*)(&(data_word[0]));
 			ext2 = *(uint32_t*)(&(data_word[2]));
-			sprintf(buffer_aux, "%d\t%d\t", data_word[0],data_word[2]);
-			balde_caixa();
 			break;
 		case 172:
 			sensorpressao2 = data_word[0];
 			leitura_PotInt2 =  data_word[1];
 			tempInt2 =         data_word[2];
-			sprintf(buffer_aux, "%d\t%d\t%d\t", data_word[0],data_word[1],data_word[2]);
-			balde_caixa();
 			break;
 		case 173:
 			ext22 = *(uint32_t*)(&(data_word[0]));
-			sprintf(buffer_aux, "%d\t", data_word[0]);
-			balde_caixa();
 			break;
 		case 178:
 			ext13 = *(uint32_t*)(&(data_word[0]));
 			ext23 = *(uint32_t*)(&(data_word[2]));
-			sprintf(buffer_aux, "%d\t%d\t", data_word[0],data_word[2]);
-			balde_caixa();
 			break;
 		case 179:
 			PotTD = data_word[0];
-			sprintf(buffer_aux, "%d\t", data_word[0]);
-			balde_caixa();
 			break;
 		case 263:
 			temp_pack0_1 = data_word[1];
 			temp_pack0_2 = data_word[2];
-			sprintf(buffer_aux, "%d\t%d\t",data_word[1],data_word[2]);
-			balde_caixa();
 			break;
 		case 268:
 			temp_pack1_1 = data_word[1];
 			temp_pack1_2 = data_word[2];
-			sprintf(buffer_aux, "%d\t%d\t", data_word[1],data_word[2]);
-			balde_caixa();
 			break;
 		case 273:
 			temp_pack2_1 = data_word[1];
 			temp_pack2_2 = data_word[2];
-			sprintf(buffer_aux, "%d\t%d\t", data_word[1],data_word[2]);
-						balde_caixa();
 			break;
 		case 278:
 			temp_pack3_1 = data_word[1];
 			temp_pack3_2 = data_word[2];
-			sprintf(buffer_aux, "%d\t%d\t", data_word[1],data_word[2]);
-						balde_caixa();
 			break;
 		case 283:
 			temp_pack4_1 = data_word[1];
 			temp_pack4_2 = data_word[2];
-			sprintf(buffer_aux, "%d\t%d\t", data_word[1],data_word[2]);
-						balde_caixa();
 			break;
 		case 288:
 			temp_pack5_1 = data_word[1];
 			temp_pack5_2 = data_word[2];
-			sprintf(buffer_aux, "%d\t%d\t", data_word[1],data_word[2]);
-						balde_caixa();
 			break;
 
 	}
@@ -248,7 +202,75 @@ void writeSD(void)
 	UINT bytes_written;
 	FRESULT fresult;
 	timer = HAL_GetTick();
-	UINT len = strlen(buffer_log);
+	UINT len = sprintf(buffer_log, "\r\n%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%d\t%d\t%u\t%u\t%d\t%d\t%u\t%u\t%u\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%d\t%d\t%d\t%d",
+			ECU_Mode,
+			Intensidade_Frenagem,
+			_ecu_flag,
+			timer,
+			Hodometro_P,
+			Hodometro_T,
+			Speed_LR,
+			Speed_RR,
+			V_motor_D,
+			V_motor_E,
+			Torque_LM,
+			Torque_RM,
+			Torque_ref_R,
+			Torque_ref_L,
+			Current_LM,
+			Current_RM,
+			Pedal,
+			Volante,
+			tempInv_D1,
+			tempInv_D2,
+			tempInv_E1,
+			tempInv_E2,
+			accelX,
+			accelY,
+			accelZ,
+			gyroX,
+			gyroY,
+			gyroZ,
+			temp,
+			sensorpressao1,
+			leitura_PotInt,
+			tempInt,
+			ext1,
+			ext2,
+			ext13,
+			ext23,
+			ext22,
+			leitura_PotInt2,
+			PotTD,
+			sensorpressao2,
+			leitura_PotInt2,
+			tempInt2,
+			current_sensor1_baixa,
+			current_sensor1_alta,
+			current_sensor2,
+			current_sensor3,
+			tensaototal,
+			tempmediabb,
+			tempmaxbb,
+			temp_pack0_1,
+			temp_pack0_2,
+			temp_pack1_1,
+			temp_pack1_2,
+			temp_pack2_1,
+			temp_pack2_2,
+			temp_pack3_1,
+			temp_pack3_2,
+			temp_pack4_1,
+			temp_pack4_2,
+			temp_pack5_1,
+			temp_pack5_2,
+			Current_BAT,
+			Volt_BAT,
+			Tensao_GLV,
+			IRCan[0],
+			IRCan[1],
+			IRCan[2],
+			IRCan[3]);
 	fresult = f_open(&file, bufferFile, FA_OPEN_ALWAYS | FA_WRITE); //open file on SD card to write
 	fresult = f_lseek(&file, file.fsize);//goes to the end of the file
 	fresult = f_write(&file, buffer_log, len, &bytes_written);     //write data to the file
@@ -264,11 +286,77 @@ void cabecalho(void)
 {
 	UINT bytes_written;
 	FRESULT fresult;
-	char buffer_log[256];
-	strcpy("ECU_Timer\tSpeed_LR\tSpeed_RR\tTorque_LM\tTorque_RM\tref_R\tCurrent_LM\tCurrent_RM\tCurrent_BAT\tVolt_BAT\taccelX\taccelY\taccelZ\tgyroX\tgyroY\tgyroZ\ttemp\tlei_Bet\tlei_Pot\ttermopar\text1\text2\tTensaoGLV\tIRcan0\tIRcan1\tIRcan2\tIRcan3\tIRcan4\tIRcan5\tIRcan6\tIRcan7\tIRcan8\tIRcan9\tIRcan10\tIRcan11\tIRcan12\tIRcan13\tIRcan14\tIRcan15",buffer_log);
+	char buffer_log[512] = "ECU_Mod"
+			"\tFrenag"
+			"\tECUflag"
+			"\tTimer"
+			"\tHod_P"
+			"\tHod_T"
+			"\tVel_L"
+			"\tVel_R"
+			"\tVmotorD"
+			"\tVmotorE"
+			"\tTor_L"
+			"\tTor_R"
+			"\tRef_L"
+			"\tRef_R"
+			"\tCurr_LM"
+			"\tCurr_RM"
+			"\tPedal"
+			"\tVol"
+			"\tTinvD1"
+			"\tTinvD2"
+			"\tTinvE1"
+			"\tTinvE2"
+			"\taccelX"
+			"\taccelY"
+			"\taccelZ"
+			"\tgyroX"
+			"\tgyroY"
+			"\tgyroZ"
+			"\ttemp1"
+			"\tPress1"
+			"\tBet"
+			"\tPot1"
+			"\tterm"
+			"\text1"
+			"\text2"
+			"\text3"
+			"\text4"
+			"\text5"
+			"\tPotInt"
+			"\tPotleit"
+			"\tPress2"
+			"\tPot2"
+			"\tTemp2"
+			"\tiSensL"
+			"\tiSensH"
+			"\tiSens2"
+			"\tiSens3"
+			"\tVoltT"
+			"\tTempM"
+			"\tTempH"
+			"\ttPack11"
+			"\ttPack12"
+			"\ttPack21"
+			"\ttPack22"
+			"\ttPack31"
+			"\ttPack32"
+			"\ttPack41"
+			"\ttPack42"
+			"\ttPack51"
+			"\ttPack52"
+			"\tiBAT"
+			"\tVoltBAT"
+			"\tVoltGLV"
+			"\tIRcan0"
+			"\tIRcan1"
+			"\tIRcan2"
+			"\tIRcan3"
+			"\tIRcan4";
 	fresult = f_open(&file, bufferFile, FA_OPEN_ALWAYS | FA_WRITE); //open file on SD card to write
 	fresult = f_lseek(&file, file.fsize);//goes to the end of the file
-	fresult = f_write(&file, buffer_log, 256, &bytes_written);//write data to the file
+	fresult = f_write(&file, buffer_log, (UINT)512, &bytes_written);//write data to the file
 	fresult = f_close(&file);//closes the file
 	    if(fresult == FR_OK){
 	    	for(int i = 0; i<4; i++){

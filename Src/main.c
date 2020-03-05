@@ -124,6 +124,7 @@ int main(void)
   HAL_Delay(500);
   SetupACEL();
   SD_Create_File();
+  cabecalho();
   /* USER CODE END 2 */
  
  
