@@ -1,0 +1,2 @@
+CAN_handler.c:10:6:initialize_CAN	24	static
+CAN_handler.c:40:6:can_transmit	24	static
