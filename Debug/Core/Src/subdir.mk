@@ -8,6 +8,7 @@ C_SRCS += \
 ../Core/Src/CAN_handler.c \
 ../Core/Src/Initializers.c \
 ../Core/Src/SD.c \
+../Core/Src/can_log.c \
 ../Core/Src/general_can.c \
 ../Core/Src/main.c \
 ../Core/Src/sdmmc.c \
@@ -21,6 +22,7 @@ OBJS += \
 ./Core/Src/CAN_handler.o \
 ./Core/Src/Initializers.o \
 ./Core/Src/SD.o \
+./Core/Src/can_log.o \
 ./Core/Src/general_can.o \
 ./Core/Src/main.o \
 ./Core/Src/sdmmc.o \
@@ -34,6 +36,7 @@ C_DEPS += \
 ./Core/Src/CAN_handler.d \
 ./Core/Src/Initializers.d \
 ./Core/Src/SD.d \
+./Core/Src/can_log.d \
 ./Core/Src/general_can.d \
 ./Core/Src/main.d \
 ./Core/Src/sdmmc.d \
@@ -46,5 +49,5 @@ C_DEPS += \
 
 # Each subdirectory must supply rules for building sources it contributes
 Core/Src/%.o: ../Core/Src/%.c Core/Src/subdir.mk
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32H743xx -c -I../Core/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "$@"
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32H743xx -c -I../Core/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "$@"
 

@@ -1,5 +1,7 @@
 #include "general_can.h"
 #include "CAN_handler.h"
+#include "SD.h"
+#include "can_log.h"
 
 static FDCAN_HandleTypeDef* can_ptr;;
 
@@ -37,15 +39,12 @@ void CAN_general_receive_callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0I
 			Error_Handler();
 		}
 
-		//TESTAR HABILITAR SÓ UMA DAS INTERRUPÇÕES NO .IOC
-
-		//TENTAR SETAR A LED APAGADA ANTES DA MAIN, USANDO REGISTRADOR E A LÓGICA INVERTIDA DO CÓDIGO DO LAB 2 DE EMBUTIDOS
-
 		idgeneral = RxHeader.Identifier;
 		for(int i = 0; i < 8; i += 2){
 			datageneral[i/2] = (RxData[i+1] << 8) | RxData[i];
 		}
 		//TODO: implementar lógica de colocar as mensagens nas variáveis certas
+		canMessageReceived(idgeneral, datageneral);
 
 		if (HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK) {
 			/* Notification Error */
