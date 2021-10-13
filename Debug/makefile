@@ -65,8 +65,8 @@ all: main-build
 main-build: DAQ-Master2.0.elf secondary-outputs
 
 # Tool invocations
-DAQ-Master2.0.elf: $(OBJS) $(USER_OBJS) C:\Users\Lucas\Documents\Git-Clone-Tesla\DAQ-Master\STM32H743VITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "DAQ-Master2.0.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\Lucas\Documents\Git-Clone-Tesla\DAQ-Master\STM32H743VITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="DAQ-Master2.0.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+DAQ-Master2.0.elf: $(OBJS) $(USER_OBJS) C:\Users\breno\Tesla\DAQ_Tesla\DAQ-Master\STM32H743VITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "DAQ-Master2.0.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\breno\Tesla\DAQ_Tesla\DAQ-Master\STM32H743VITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="DAQ-Master2.0.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

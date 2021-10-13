@@ -24,7 +24,7 @@ void Clean_CAN_Struct(void) {
 void canMessageReceived(uint16_t id, uint8_t *data) {
 	if (id > CAN_IDS_NUMBER - 1)
 		return;
-	HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_6);
+
 	uint16_t *data_word = (uint16_t*) data;
 	can_vector[id].word_0 = data_word[0];
 	can_vector[id].word_1 = data_word[1];

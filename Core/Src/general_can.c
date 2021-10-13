@@ -43,6 +43,7 @@ void CAN_general_receive_callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0I
 		for(int i = 0; i < 8; i += 2){
 			datageneral[i/2] = (RxData[i+1] << 8) | RxData[i];
 		}
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_6);
 		//TODO: implementar lógica de colocar as mensagens nas variáveis certas
 		canMessageReceived(idgeneral, datageneral);
 
