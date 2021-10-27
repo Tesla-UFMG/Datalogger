@@ -113,6 +113,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   init_CAN();
   SD_Create_File();
+  cabecalho();
   Clean_CAN_Struct();
   //uint16_t vet_tx[4]={0,0,0,0};
   uint16_t id = 0;
