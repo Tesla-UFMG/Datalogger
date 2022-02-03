@@ -61,6 +61,12 @@ void Error_Handler(void);
 #define _DLC_ 8
 #define CD_Pin GPIO_PIN_0
 #define CD_GPIO_Port GPIOD
+#define CAN_LED_Pin GPIO_PIN_3
+#define CAN_LED_GPIO_Port GPIOD
+#define DATALOG_LED_Pin GPIO_PIN_5
+#define DATALOG_LED_GPIO_Port GPIOD
+#define ACCEL_LED_Pin GPIO_PIN_6
+#define ACCEL_LED_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

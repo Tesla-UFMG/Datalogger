@@ -1,6 +1,7 @@
 "./Core/Src/CAN_handler.o"
 "./Core/Src/Initializers.o"
 "./Core/Src/SD.o"
+"./Core/Src/SD_DMA.o"
 "./Core/Src/can_log.o"
 "./Core/Src/general_can.o"
 "./Core/Src/main.o"

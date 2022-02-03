@@ -13,10 +13,13 @@
 #include "fatfs.h"
 #include "can_log.h"
 
+
 #define CAN_IDS_NUMBER 400
 
 FRESULT SD_Create_File();
 void writeSD(void);
+
+void writeSDBuffer(void);
 
 
 #endif /* INC_SD_H_ */

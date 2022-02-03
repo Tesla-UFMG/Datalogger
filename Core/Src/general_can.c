@@ -33,7 +33,7 @@ void general_can_transmit(uint32_t id, uint16_t* data) {
 //função de callback, chamada quando chega qualquer mensagem, de qualquer ID
 void CAN_general_receive_callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)  {
 	if((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET) {
-
+		//piscar LED da CAN PD3
 		if (HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK) {
 			/* Reception Error */
 			Error_Handler();
@@ -43,7 +43,7 @@ void CAN_general_receive_callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0I
 		for(int i = 0; i < 8; i += 2){
 			datageneral[i/2] = (RxData[i+1] << 8) | RxData[i];
 		}
-		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_6);
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_6); //A LED DA CAN (PIN 3, TÁ QUEIMADA)
 		//TODO: implementar lógica de colocar as mensagens nas variáveis certas
 		canMessageReceived(idgeneral, datageneral);
 

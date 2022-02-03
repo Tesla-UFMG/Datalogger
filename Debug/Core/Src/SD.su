@@ -1,3 +1,4 @@
-SD.c:23:9:SD_Create_File	16	static
-SD.c:46:6:cabecalho	1424	static
-SD.c:59:6:writeSD	1416	static
+SD.c:25:9:SD_Create_File	16	static
+SD.c:49:6:Cabecalho	1328	static
+SD.c:62:6:writeSD	1752	static
+SD.c:128:6:writeSDBuffer	1248	static

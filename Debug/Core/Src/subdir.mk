@@ -8,6 +8,7 @@ C_SRCS += \
 ../Core/Src/CAN_handler.c \
 ../Core/Src/Initializers.c \
 ../Core/Src/SD.c \
+../Core/Src/SD_DMA.c \
 ../Core/Src/can_log.c \
 ../Core/Src/general_can.c \
 ../Core/Src/main.c \
@@ -22,6 +23,7 @@ OBJS += \
 ./Core/Src/CAN_handler.o \
 ./Core/Src/Initializers.o \
 ./Core/Src/SD.o \
+./Core/Src/SD_DMA.o \
 ./Core/Src/can_log.o \
 ./Core/Src/general_can.o \
 ./Core/Src/main.o \
@@ -36,6 +38,7 @@ C_DEPS += \
 ./Core/Src/CAN_handler.d \
 ./Core/Src/Initializers.d \
 ./Core/Src/SD.d \
+./Core/Src/SD_DMA.d \
 ./Core/Src/can_log.d \
 ./Core/Src/general_can.d \
 ./Core/Src/main.d \

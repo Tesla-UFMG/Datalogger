@@ -113,10 +113,15 @@ int main(void)
   /* USER CODE BEGIN 2 */
   init_CAN();
   SD_Create_File();
-  cabecalho();
+  Cabecalho();
   Clean_CAN_Struct();
   //uint16_t vet_tx[4]={0,0,0,0};
   uint16_t id = 0;
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+
+  /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -161,6 +166,8 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  writeSD();
+	  //writeSDBuffer();
+
   }
   /* USER CODE END 3 */
 }
@@ -365,7 +372,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_6, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOD, CAN_LED_Pin|DATALOG_LED_Pin|ACCEL_LED_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin : CD_Pin */
   GPIO_InitStruct.Pin = CD_Pin;
@@ -373,8 +380,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(CD_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PD6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_6;
+  /*Configure GPIO pins : CAN_LED_Pin DATALOG_LED_Pin ACCEL_LED_Pin */
+  GPIO_InitStruct.Pin = CAN_LED_Pin|DATALOG_LED_Pin|ACCEL_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
