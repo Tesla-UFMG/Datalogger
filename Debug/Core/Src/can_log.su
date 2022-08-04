@@ -1,2 +1,2 @@
-can_log.c:15:6:Clean_CAN_Struct	16	static
-can_log.c:24:6:canMessageReceived	24	static
+../Core/Src/can_log.c:15:6:Clean_CAN_Struct	16	static
+../Core/Src/can_log.c:24:6:canMessageReceived	24	static

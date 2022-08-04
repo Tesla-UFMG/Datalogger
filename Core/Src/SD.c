@@ -6,21 +6,25 @@
  */
 
 #include "SD.h"
+#include "general_can.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 
 extern CanIdData_t can_vector[CAN_IDS_NUMBER];
-int aux = 0;
 
 static FATFS g_sFatFs;
 FIL file;
+FIL file1;
 char bufferFile[20];//buffer with the name of the file
 int count = 0;
 uint8_t _datalog_flag = 0;
 
-uint8_t buffer_log[10][400];
+int aux;
 
+extern IWDG_HandleTypeDef hiwdg1;
+
+char block[700];
 
 FRESULT SD_Create_File(void)
 {
@@ -33,10 +37,12 @@ FRESULT SD_Create_File(void)
 		sprintf(bufferFile, "ARQ%02d.txt", contFile);
 		fresult = f_stat(bufferFile, &file);
 		contFile++;
+		HAL_IWDG_Refresh(&hiwdg1);
 	} while(fresult != FR_NO_FILE);
 	contFile = 0;
 	fresult = f_open(&file, bufferFile, FA_CREATE_ALWAYS ); /*Create file on SD card*/
 	fresult = f_close(&file);
+	HAL_IWDG_Refresh(&hiwdg1);
 	if(fresult == FR_OK){
 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_5); //Blinks the led to indicate that there was no erros
 		_datalog_flag  = 1;
@@ -46,15 +52,42 @@ FRESULT SD_Create_File(void)
 	return fresult;
 }
 
-void Cabecalho(void){
+void readSD(void)
+{
+	//fazer um f_lseek, dps um fgets ou um f_read, colocar num buffer e escolher a posição do hodometro
+
+	//testar o f_lseek normal e o debaixo aí com -1
+
+	if(aux > 0){
+		UINT bytes_read;
+		FRESULT fresult;
+		uint16_t ultima_linha[25];
+
+		sprintf(bufferFile, "ARQ%02d.txt", aux);
+		fresult = f_stat(bufferFile, &file1);
+
+		fresult = f_open(&file1, bufferFile, FA_OPEN_ALWAYS | FA_READ); //open file on SD card to write*/
+		fresult = f_lseek(&file1, file.obj.objsize - 1);
+		fresult = f_read(&file1, ultima_linha, 20, &bytes_read);
+		fresult = f_close(&file1);//closes the file
+
+		uint16_t controle[4] = {0, 0, 0, ultima_linha[9]};
+
+		general_can_transmit(102, controle);
+	}
+}
+
+void Cabecalho(void)
+{
 	UINT bytes_written;
 	FRESULT fresult;
 
-	char cabecalho[1301];
-	strcpy(cabecalho, "Timer\tVol\tAccel\tFreio\tModo\tFrenagemReg\tHodometroP\tHodometroT\tTorqueRM\tTorqueLM\tTorqueRefR\tTorqueRefL\tVelRM\tVelLM\tEcuEventId\tEcuEventId\tVelFrontLTie\tVelFrontRTie\tVelBackRTie\tVelBackLTie\tTorqueGain\tTCurrentRM\tTCurrentLM\tTempInversorR1\tTempInversorR2\tTempInversorL1\tTempInversor2L\tAccelX\tAccelY\tAccelZ\tErro\tGyroX\tGyroY\tGyroZ\tErro\tISensor2\tISensor1High\tISensor1Low\tISensor3\tGlvVoltage\tCarga(%)\tAir\tTensaoTot\tTMaxBancoBat\tTensaoMin\tTensaoMax\tVCel400\tVCel401\tVCel402\tVCel403\tVCel404\tVCel405\tVCel406\tVCel407\tVCel408\tVCel409\tVCel410\tVCel411\tVCel412\tTemp400\tTemp401\tTemp302\tTemp403\tTemp404\tVCel500\tVCel501\tVCel502\tVCel53\tVCel504\tVCel505\tVCel506\tVCel507\tVCel508\tVCel509\tVCel510\tVCel511\tVCel512\tTemp500\tTemp501\tTemp502\tTemp503\tTemp504\tVCel300\tVCel301\tVCel302\tVCel303\tVCel304\tVCel305\tVCel306\tVCel307\tVCel308\tVCel309\tVCel310\tVCel311\tVCel312\tTemp300\tTemp301\tTemp302\tTemp303\tTemp304\tVCel200\tVCel201\tVCel202\tVCel203\tVCel204\tVCel205\tVCel206\tVCel207\tVCel208\tVCel209\tVCel210\tVCel211\tVCel212\tTemp200\tTemp201\tTemp202\tTemp203\tTemp204\tVCel100\tVCel101\tVCel102\tVCel103\tVCel104\tVCel105\tVCel106\tVCel107\tVCel108\tVCel109\tVCel110\tVCel111\tVCel112\tTemp100\tTemp101\tTemp102\tTemp103\tTemp104\tVCel000\tVCel001\tVCel002\tVCel003\tVCel004\tVCel005\tVCel006\tVCel007\tVCel008\tVCel009\tVCel010\tVCel011\tVCel012\tTemp000\tTemp001\tTemp002\tTemp003\tTemp004\n");
+	char cabecalho[1625];
+	strcpy(cabecalho, "TIMER\tVOL\tACELERADOR\tFREIO\tMODO\tFRENAGEM_REG\tHODOMETRO_P\tHODOMETRO_T\tTORQUE_R\tTORQUE_L\tTORQUE_REF_R_\tTORQUE_REF_L\tSPEED_R_MOTOR\tSPEED_L_MOTOR\tECU_CONTROL_ID\tECU_CONTROL_EVENT_ID\tSPEED_FRONT_L_TIE\tSPEED_FRONT_R_TIE\tSPEED_BACK_R_TIE\tSPEED_BACK_L_TIE\tTORQUE_GAIN\tSENTIDO_VOL\tCORR_TORQUE_R\tCORR_TORQUE_L\tTEMP_INV_1_R\tTEMP_INV_2_R\tTEMP_INV_1_L\tTEMP_INV_2_L\tSPEED_L\tSPEED_R\tPOWER_L\tPOWER_R\tENERGY_L\tENERGY_R\tOVERLOAD_L\tOVERLOAD_R\tLOST_MSG_L\tLOST_MSG_R\tBUS_OFF_L\tBUS_OFF_R\tCAN_STATE_L\tCAN_STATE_R\tINV_STATE_L\tINV_STATE_R\tFALHA_L\tFALHA_R\tALARM_L\tALARM_R\tACCEL_X\tACCEL_Y\tACCEL_Z\tERRO\tGYRO_X\tGYRO_Y\tGYRO_Z\tERROR\tV_MAX\tV_MIN\tDELTA_V\tTEMP_MAX\tMODO_BMS\tBMS_ERROR_FLAG\tCONTATORES_STATUS\tV_TS\tI_SENSOR_1_ALTA\tI_SENSOR_2_BAIXA\tI_SENSOR_2_ALTA\tI_SENSOR_3_BAIXA\tI_SENSOR_3_ALTA\tI_SENSOR_4_BAIXA\tI_SENSOR_4_ALTA\tVCel101\tVCel102\tVCel103\tVCel104\tVCel105\tVCel106\tVCel107\tVCel108\tVCel109\tVCel110\tVCel111\tVCel112\tTemp101\tTemp102\tTemp103\tTemp104\tTemp105\tV_TOT_1\tV_REF_1\tFLAG_BAL_1\tVCel201\tVCel102\tVCel203\tVCel204\tVCel205\tVCel206\tVCel207\tVCel208\tVCel209\tVCel211\tVCel212\tTemp201\tTemp202\tTemp203\tTemp204\tTemp205\tV_TOT_2\tV_REF_2\tFLAG_BAL_2V\tVCel301\tVCel302\tVCel303\tVCel304\tVCel305\tVCel306\tVCel307\tVCel308\tVCel309\tVCel311\tVCel312\tTemp301\tTemp302\tTemp303\tTemp304\tTemp305\tV_TOT_3\tV_REF_3\tFLAG_BAL_3\tVCel401\tVCel402\tVCel403\tVCel404\tVCel405\tVCel406\tVCel407\tVCel408\tVCel409\tVCel410\tVCel411\tVCel412\tTemp401\tTemp402\tTemp403\tTemp404\tTemp405\tV_TOT_4\tV_REF_4\tFLAG_BAL_4\n");
 	int tamanho = strlen(cabecalho);
 
-	fresult = f_open(&file, bufferFile, FA_OPEN_ALWAYS | FA_WRITE); //open file on SD card to write*/
+
+	fresult = f_open(&file, bufferFile, FA_OPEN_ALWAYS | FA_WRITE); //open file on SD card to write
 	fresult = f_write(&file, cabecalho, tamanho, &bytes_written); //write data to the file
 	fresult = f_close(&file);
 }
@@ -63,54 +96,105 @@ void writeSD(void)
 {
 	UINT bytes_written;
 	FRESULT fresult;
-	//implementar dos dois jeitos, pra ficar fácil de testar e trocar nos testes caso algum falhe
-	uint8_t block[512];
+	//uint16_t block[310];
 	int len;
 	uint32_t time = HAL_GetTick();
 
 	len = snprintf((char*) block, sizeof(block),
-			//1   2   3   4   5   6   7   8
-			"%lu\t%u\t%u\t%u\t%d\t%u\t%u\t%u\t"	//1//Timer\Volante\Acelerador\Freio\Modo\Frenagem_Reg\Hodometro_P\Hodometro_T
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//2//Torque_RM\Torque_LM\TRef_R\Tref_L\V_Motor_R\V_Motor_L\Control_Event_id\Control_Event_id
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//3//V_Front_L_Tie\V_Front_R_Tie\V_Back_R_Tie\V_Back_L_Tie\Torque_Gain\tCurrent_RM\tCurrent_LM\T_Inversor1_D
-			"%u\t%u\t%u\t%d\t%d\t%d\t%u\t"	//4//T_Inversor2_D\T_Inversor1_E\T_Inversor2_E\AccelX\AccelY\AccelZ\Erro\GyroX
-			"%d\t%d\t%u\t%u\t%d\t%d\t%d\t%d\t"	//5//GyroY\GyroZ\Erro\T_Disco_1\Extensometro_1\Extensometro_2\Sensor_Pressao_2\ADC_2
-			"%u*\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//6//T_Disco_2\Extensometro_3\Extensometro_4\Extensometro_5\ADC_3\Tensao_GLV\Tensao_Total\Temp_Media_Banco
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//7//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//8//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//9//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//10//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%d\t%u\t%u\t%u\t%u\t%u\t"	//11//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//12//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//13//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//14//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//15//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//16//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//17//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//18//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//19//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\n",					//20//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
+			//1   2   3   4
+			"%lu\t%u\t%u\t%u\t"     //Id 101
+			"%u\t%u\t%u\t%u\t"	    //Id 102
+			"%u\t%u\t%u\t%u\t"      //Id 103
+			"%u\t%u\t%u\t%u\t"      //Id 104
 
-	/*1	*/	time,can_vector[101].word_1, can_vector[101].word_2, can_vector[101].word_3, (int8_t)can_vector[102].word_0, can_vector[102].word_1,can_vector[102].word_2,can_vector[102].word_3,
-	/*2	*/	can_vector[103].word_0,can_vector[103].word_1,can_vector[103].word_2,can_vector[103].word_3,can_vector[104].word_0,can_vector[104].word_1,can_vector[104].word_2,can_vector[104].word_3,
-	/*3	*/	can_vector[105].word_0,can_vector[105].word_1,can_vector[105].word_2,can_vector[105].word_3,can_vector[106].word_0,can_vector[106].word_2,can_vector[106].word_3,can_vector[107].word_0,
-	/*4	*/	can_vector[107].word_1,can_vector[107].word_2,can_vector[107].word_3,can_vector[108].word_0,can_vector[108].word_1,can_vector[108].word_2,can_vector[108].word_3,/*can_vector[109].word_0*/
-	/*5	*/	can_vector[109].word_0,can_vector[109].word_1,can_vector[109].word_2,can_vector[109].word_3,can_vector[50].word_0,can_vector[50].word_1,can_vector[50].word_2,can_vector[50].word_3,
-	/*6	*/	can_vector[51].word_0,can_vector[51].word_1,can_vector[51].word_3,can_vector[52].word_1,can_vector[52].word_3,can_vector[53].word_0,can_vector[53].word_1,can_vector[256].word_0,
-	/*7	*/	/*can_vector[256].word_1*/can_vector[256].word_1,can_vector[256].word_2,can_vector[256].word_3,can_vector[257].word_0,can_vector[257].word_1,can_vector[257].word_2,can_vector[257].word_3,
-	/*8	*/	can_vector[258].word_0,can_vector[258].word_1,can_vector[258].word_2,can_vector[258].word_3,can_vector[259].word_0,can_vector[259].word_1,can_vector[259].word_2,can_vector[259].word_3,
-	/*9	*/	can_vector[260].word_0,can_vector[260].word_1,can_vector[261].word_0,can_vector[261].word_1,can_vector[261].word_2,can_vector[261].word_3,can_vector[262].word_0,can_vector[262].word_1,
-	/*10*/	can_vector[262].word_2,can_vector[262].word_3,can_vector[263].word_0,can_vector[263].word_1,can_vector[263].word_2,can_vector[263].word_3,can_vector[264].word_0,can_vector[264].word_1,
-	/*11*/	can_vector[264].word_2,can_vector[264].word_3,can_vector[265].word_0,can_vector[265].word_1,can_vector[266].word_0,can_vector[266].word_1,can_vector[266].word_2,can_vector[266].word_3,
-	/*12*/	can_vector[267].word_0,can_vector[267].word_1,can_vector[267].word_2,can_vector[267].word_3,can_vector[268].word_0,can_vector[268].word_1,can_vector[268].word_2,can_vector[268].word_3,
-	/*13*/	can_vector[269].word_0,can_vector[269].word_1,can_vector[269].word_2,can_vector[269].word_3,can_vector[270].word_0,can_vector[270].word_1,can_vector[271].word_0,can_vector[271].word_1,
-	/*14*/	can_vector[271].word_2,can_vector[271].word_3,can_vector[272].word_0,can_vector[272].word_1,can_vector[272].word_2,can_vector[272].word_3,can_vector[273].word_0,can_vector[273].word_1,
-	/*15*/	can_vector[273].word_2,can_vector[273].word_3,can_vector[274].word_0,can_vector[274].word_1,can_vector[274].word_2,can_vector[274].word_3,can_vector[275].word_0,can_vector[275].word_1,
-	/*16*/	can_vector[276].word_0,can_vector[276].word_1,can_vector[276].word_2,can_vector[276].word_3,can_vector[277].word_0,can_vector[277].word_1,can_vector[277].word_2,can_vector[277].word_3,
-	/*17*/	can_vector[278].word_0,can_vector[278].word_1,can_vector[278].word_2,can_vector[278].word_3,can_vector[279].word_0,can_vector[279].word_1,can_vector[279].word_2,can_vector[279].word_3,
-	/*18*/	can_vector[280].word_0,can_vector[280].word_1,can_vector[281].word_0,can_vector[281].word_1,can_vector[281].word_2,can_vector[281].word_3,can_vector[282].word_0,can_vector[282].word_1,
-	/*19*/	can_vector[282].word_2,can_vector[282].word_3,can_vector[283].word_0,can_vector[283].word_1,can_vector[283].word_2,can_vector[283].word_3,can_vector[284].word_0,can_vector[284].word_1,
-	/*20*/	can_vector[284].word_2,can_vector[284].word_3,can_vector[285].word_0,can_vector[285].word_1);
+			"%u\t%u\t%u\t%u\t"      //Id 105
+			"%u\t%u\t%u\t%u\t"      //Id 106
+			"%u\t%u\t%u\t%u\t"		//Id 107
+			"%u\t%u\t%u\t%u\t"		//Id 109
+
+			"%u\t%u\t%u\t%u\t"		//Id 110
+			"%u\t%u\t%u\t%u\t"      //Id 111
+			"%u\t%u\t%u\t%u\t"		//Id 112
+			"%u\t%u\t%u\t%u\t"		//Id 113
+
+			"%u\t%u\t%u\t%u\t"		//Id 291
+			"%u\t%u\t%u\t%u\t"      //Id 292
+
+			"%u\t%u\t%u\t%u\t"		//Id 50
+			"%u\t%u\t%u\t%u\t"		//Id 51
+			"%u\t%u\t%u\t"		    //Id 54
+			"%u\t%u\t%u\t%u\t"		//Id 55
+
+			"%u\t%u\t%u\t%u\t"		//Id 256
+			"%u\t%u\t%u\t%u\t"		//Id 257
+			"%u\t%u\t%u\t%u\t"		//Id 258
+			"%u\t%u\t%u\t%u\t"		//Id 259
+			"%u\t%u\t%u\t%u\t"		//Id 260
+
+			"%u\t%u\t%u\t%u\t"		//Id 261
+			"%u\t%u\t%u\t%u\t"		//Id 262
+			"%u\t%u\t%u\t%u\t"		//Id 263
+			"%u\t%u\t%u\t%u\t"		//Id 264
+			"%u\t%u\t%u\t%u\t"		//Id 265
+
+			"%u\t%u\t%u\t%u\t"		//Id 266
+			"%u\t%u\t%u\t%u\t"		//Id 267
+			"%u\t%u\t%u\t%u\t"		//Id 268
+			"%u\t%u\t%u\t%u\t"		//Id 269
+			"%u\t%u\t%u\t%u\t"		//Id 270
+
+			"%u\t%u\t%u\t%u\t"		//Id 271
+			"%u\t%u\t%u\t%u\t"		//Id 272
+			"%u\t%u\t%u\t%u\t"		//Id 273
+			"%u\t%u\t%u\t%u\t"		//Id 274
+			"%u\t%u\t%u\t%u\n",		//Id 275
+
+/*Id 101 */	time, VOLANTE, ACELERADOR, FREIO,
+/*Id 102 */ MODO, FRENAGEM_REG, HODOMETRO_PARCIAL, HODOMETRO_TOTAL,
+/*Id 103 */ TORQUE_R, TORQUE_L, REF_TORQUE_R, REF_TORQUE_L,
+/*Id 104 */	SPEED_R_MOTOR, SPEED_L_MOTOR, ECU_CONTROL_ID, ECU_CONTROL_EVENT_ID,
+
+/*Id 105 */	SPEED_FRONT_L_TIE, SPEED_FRONT_R_TIE,SPEED_BACK_R_TIE, SPEED_BACK_L_TIE,
+/*Id 106 */	GANHO_TORQUE, SENTIDO_VOLANTE, CORRENTE_TORQUE_R, CORRENTE_TORQUE_L,
+/*Id 107 */ TEMP_INV_1_R, TEMP_INV_2_R, TEMP_INV_1_L, TEMP_INV_2_R,
+/*Id 109 */	SPEED_L,SPEED_R, POWER_L, POWER_R,
+
+/*Id 110 */	ENERGY_L, ENERGY_R, OVERLOAD_L, OVERLOAD_R,
+/*Id 111 */ LOST_MSG_L, LOST_MSG_R, BUS_OFF_L, BUS_OFF_R,
+/*Id 112 */ CAN_STATE_L, CAN_STATE_R, INV_STATE_L, INV_STATE_R,
+/*Id 113 */ FAILURE_L,FALILURE_R, ALARM_L, ALARM_R,
+
+/*Id 291 */	ACCEL_X, ACCEL_Y, ACCEL_Z, ERRO,
+/*Id 292 */	GYRO_X, GYRO_Y, GYRO_Z, ERROR,
+
+/*Id 50 */	V_MAX, V_MIN,DELTA_V, TEMP_MAX,
+/*Id 51 */	MODO_BMS, BMS_ERROR_FLAG, CONTATORES_STATUS, V_TS,
+/*Id 54 */	/*CURRENT_SENSOR_1_BAIXA*/ CURRENT_SENSOR_1_ALTA, CURRENT_SENSOR_2_BAIXA, CURRENT_SENSOR_2_ALTA,
+/*Id 55 */	CURRENT_SENSOR_3_BAIXA, CURRENT_SENSOR_3_ALTA, CURRENT_SENSOR_4_BAIXA, CURRENT_SENSOR_4_ALTA,
+
+/*Id 260 */  V_CELL_PACK1_1, V_CELL_PACK1_2,V_CELL_PACK1_3,V_CELL_PACK1_4,
+/*Id 261 */	V_CELL_PACK1_5, V_CELL_PACK1_6,V_CELL_PACK1_7,V_CELL_PACK1_8,
+/*Id 262 */	V_CELL_PACK1_9, V_CELL_PACK1_10,V_CELL_PACK1_11,V_CELL_PACK1_12,
+/*Id 263 */	TEMP_PACK1_1, TEMP_PACK1_2,TEMP_PACK1_3,TEMP_PACK1_4,
+/*Id 264 */	TEMP_PACK1_5, V_TOT_PACK1, V_REF_PACK1, FLAG_BAL_PACK1,
+
+/*Id 265 */  V_CELL_PACK2_1, V_CELL_PACK2_2,V_CELL_PACK2_3,V_CELL_PACK2_4,
+/*Id 266 */	V_CELL_PACK2_5, V_CELL_PACK2_6,V_CELL_PACK2_7,V_CELL_PACK2_8,
+/*Id 267 */	V_CELL_PACK2_9, V_CELL_PACK2_10,V_CELL_PACK2_11,V_CELL_PACK2_12,
+/*Id 268 */	TEMP_PACK2_2, TEMP_PACK2_2,TEMP_PACK2_3,TEMP_PACK2_4,
+/*Id 269 */	TEMP_PACK2_5, V_TOT_PACK2, V_REF_PACK2, FLAG_BAL_PACK2,
+
+/*Id 270 */  V_CELL_PACK3_1, V_CELL_PACK3_2,V_CELL_PACK3_3,V_CELL_PACK3_4,
+/*Id 271 */	V_CELL_PACK3_5, V_CELL_PACK3_6,V_CELL_PACK3_7,V_CELL_PACK3_8,
+/*Id 272 */	V_CELL_PACK3_9, V_CELL_PACK3_10,V_CELL_PACK3_11,V_CELL_PACK3_12,
+/*Id 273 */	TEMP_PACK3_1, TEMP_PACK3_2,TEMP_PACK3_3,TEMP_PACK3_4,
+/*Id 274 */	TEMP_PACK3_5, V_TOT_PACK3, V_REF_PACK3, FLAG_BAL_PACK3,
+
+/*Id 275 */  V_CELL_PACK4_1, V_CELL_PACK4_2,V_CELL_PACK4_3,V_CELL_PACK4_4,
+/*Id 276 */	V_CELL_PACK4_5, V_CELL_PACK4_6,V_CELL_PACK4_7,V_CELL_PACK4_8,
+/*Id 277 */	V_CELL_PACK4_9, V_CELL_PACK4_10,V_CELL_PACK4_11,V_CELL_PACK4_12,
+/*Id 278 */	TEMP_PACK4_1, TEMP_PACK4_2,TEMP_PACK4_3,TEMP_PACK4_4,
+/*Id 279 */	TEMP_PACK4_5, V_TOT_PACK4, V_REF_PACK4, FLAG_BAL_PACK4);
 
 	fresult = f_open(&file, bufferFile, FA_OPEN_ALWAYS | FA_WRITE); //open file on SD card to write*/
 	fresult = f_lseek(&file, file.obj.objsize);//goes to the end of the file
@@ -125,89 +209,55 @@ void writeSD(void)
 	HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_5);
 }
 
-void writeSDBuffer(void)
-{
-	UINT bytes_written;
-	FRESULT fresult;
-	int len;
-	uint32_t time = HAL_GetTick();
 
-//Arrumar os comentários dos IDs da CAN
-	 len = snprintf((char*) buffer_log[aux], sizeof(buffer_log[aux]),
-			//1   2   3   4   5   6   7   8
-			"%lu\t%u\t%u\t%u\t%d\t%u\t%u\t%u\t"	//1//Timer\Volante\Acelerador\Freio\Modo\Frenagem_Reg\Hodometro_P\Hodometro_T
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//2//Torque_RM\Torque_LM\TRef_R\Tref_L\V_Motor_R\V_Motor_L\Control_Event_id\Control_Event_id
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//3//V_Front_L_Tie\V_Front_R_Tie\V_Back_R_Tie\V_Back_L_Tie\Torque_Gain\tCurrent_RM\tCurrent_LM\T_Inversor1_D
-			"%u\t%u\t%u\t%d\t%d\t%d\t%u\t"	//4//T_Inversor2_D\T_Inversor1_E\T_Inversor2_E\AccelX\AccelY\AccelZ\Erro\GyroX
-			"%d\t%d\t%u\t%u\t%d\t%i\t%d\t%d\t"	//5//GyroY\GyroZ\Erro\T_Disco_1\Extensometro_1\Extensometro_2\Sensor_Pressao_2\ADC_2
-			"%u*\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//6//T_Disco_2\Extensometro_3\Extensometro_4\Extensometro_5\ADC_3\Tensao_GLV\Tensao_Total\Temp_Media_Banco
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//7//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//8//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//9//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//10//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%d\t%u\t%u\t%u\t%u\t%u\t"	//11//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//12//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//13//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//14//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//15//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//16//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//17//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//18//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t"	//19//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-			"%u\t%u\t%u\t%u\n",					//20//Temp_Max_Banco\I_Sensor_1_H\I_Sensor_2_L\I_Sensor_2\I_Sensor_3\Temp_Pack_01\Temp_Pack_02\Temp_Pack_11
-
-	/*1	*/	time,can_vector[101].word_1, can_vector[101].word_2, can_vector[101].word_3, (int8_t)can_vector[102].word_0, can_vector[102].word_1,can_vector[102].word_2,can_vector[102].word_3,
-	/*2	*/	can_vector[103].word_0,can_vector[103].word_1,can_vector[103].word_2,can_vector[103].word_3,can_vector[104].word_0,can_vector[104].word_1,can_vector[104].word_2,can_vector[104].word_3,
-	/*3	*/	can_vector[105].word_0,can_vector[105].word_1,can_vector[105].word_2,can_vector[105].word_3,can_vector[106].word_0,can_vector[106].word_2,can_vector[106].word_3,can_vector[107].word_0,
-	/*4	*/	can_vector[107].word_1,can_vector[107].word_2,can_vector[107].word_3,can_vector[108].word_0,can_vector[108].word_1,can_vector[108].word_2,can_vector[108].word_3,/*can_vector[109].word_0*/
-	/*5	*/	can_vector[109].word_0,can_vector[109].word_1,can_vector[109].word_2,can_vector[109].word_3,can_vector[50].word_0,can_vector[50].word_1,can_vector[50].word_2,can_vector[50].word_3,
-	/*6	*/	can_vector[51].word_0,can_vector[51].word_1,can_vector[51].word_3,can_vector[52].word_1,can_vector[52].word_3,can_vector[53].word_0,can_vector[53].word_1,can_vector[256].word_0,
-	/*7	*/	/*can_vector[256].word_1*/can_vector[256].word_1,can_vector[256].word_2,can_vector[256].word_3,can_vector[257].word_0,can_vector[257].word_1,can_vector[257].word_2,can_vector[257].word_3,
-	/*8	*/	can_vector[258].word_0,can_vector[258].word_1,can_vector[258].word_2,can_vector[258].word_3,can_vector[259].word_0,can_vector[259].word_1,can_vector[259].word_2,can_vector[259].word_3,
-	/*9	*/	can_vector[260].word_0,can_vector[260].word_1,can_vector[261].word_0,can_vector[261].word_1,can_vector[261].word_2,can_vector[261].word_3,can_vector[262].word_0,can_vector[262].word_1,
-	/*10*/	can_vector[262].word_2,can_vector[262].word_3,can_vector[263].word_0,can_vector[263].word_1,can_vector[263].word_2,can_vector[263].word_3,can_vector[264].word_0,can_vector[264].word_1,
-	/*11*/	can_vector[264].word_2,can_vector[264].word_3,can_vector[265].word_0,can_vector[265].word_1,can_vector[266].word_0,can_vector[266].word_1,can_vector[266].word_2,can_vector[266].word_3,
-	/*12*/	can_vector[267].word_0,can_vector[267].word_1,can_vector[267].word_2,can_vector[267].word_3,can_vector[268].word_0,can_vector[268].word_1,can_vector[268].word_2,can_vector[268].word_3,
-	/*13*/	can_vector[269].word_0,can_vector[269].word_1,can_vector[269].word_2,can_vector[269].word_3,can_vector[270].word_0,can_vector[270].word_1,can_vector[271].word_0,can_vector[271].word_1,
-	/*14*/	can_vector[271].word_2,can_vector[271].word_3,can_vector[272].word_0,can_vector[272].word_1,can_vector[272].word_2,can_vector[272].word_3,can_vector[273].word_0,can_vector[273].word_1,
-	/*15*/	can_vector[273].word_2,can_vector[273].word_3,can_vector[274].word_0,can_vector[274].word_1,can_vector[274].word_2,can_vector[274].word_3,can_vector[275].word_0,can_vector[275].word_1,
-	/*16*/	can_vector[276].word_0,can_vector[276].word_1,can_vector[276].word_2,can_vector[276].word_3,can_vector[277].word_0,can_vector[277].word_1,can_vector[277].word_2,can_vector[277].word_3,
-	/*17*/	can_vector[278].word_0,can_vector[278].word_1,can_vector[278].word_2,can_vector[278].word_3,can_vector[279].word_0,can_vector[279].word_1,can_vector[279].word_2,can_vector[279].word_3,
-	/*18*/	can_vector[280].word_0,can_vector[280].word_1,can_vector[281].word_0,can_vector[281].word_1,can_vector[281].word_2,can_vector[281].word_3,can_vector[282].word_0,can_vector[282].word_1,
-	/*19*/	can_vector[282].word_2,can_vector[282].word_3,can_vector[283].word_0,can_vector[283].word_1,can_vector[283].word_2,can_vector[283].word_3,can_vector[284].word_0,can_vector[284].word_1,
-	/*20*/	can_vector[284].word_2,can_vector[284].word_3,can_vector[285].word_0,can_vector[285].word_1);
-
-		if(aux == 9){
-			fresult = f_open(&file, bufferFile, FA_OPEN_ALWAYS | FA_WRITE); //open file on SD card to write*/
-			fresult = f_lseek(&file, file.obj.objsize);//goes to the end of the file
-			for(int i = 0; i < 10; i++){
-				fresult = f_write(&file, buffer_log[i], len, &bytes_written);     //write data to the file
-			}
-			fresult = f_close(&file);//closes the file
-			//memset usar essa função pra zerar o buffer dps de escever, ver se melhora o tempo
-			//ver se o /t influencia no tempo de escrita
-			//alguns dados só
-			//a frequência ta mto alta pq ele tá escrevendo dados pequenos ainda, 20, 30, imagina qnd for uma parada
-			//de 16 bits, por exemplo
-			//Pegar as flags (exemplo) q ocupam 1 bit, pra ocupar o espaço de 4 bytes (exemplo) de um dado que
-			//tem 12 bytes(tipo ADC) e colocar as flags lá. Esse dado ficaria um número gigante no txt, tipo 98723912392
-			//daí, na janela de análise, vc teria q filtrar esse dado pra mostrar os bits dessas dos 4 bytes da flag
-			//isso dá de fazer fazendo shift qnd recebe o dado
+//void Condicoes_Teste(void)
+//{
+//	if(PRESS_PTE != 0){
+//		UINT bytes_written;
+//		FRESULT fresult;
+//		uint16_t condicoes[126];
+//		int len;
+//
+//		len = snprintf((char*) condicoes, sizeof(condicoes),
+//				//1   2  3   4   5
+//				"%u\t%u\t%u\t%u\t"      //Id 180
+//				"%u\t%u\t%u\t%u\t"	    //Id 181
+//				"%u\t%u\t%u\t%u\t"      //Id 182
+//				"%u\t%u\t%u\t"          //Id 183
+//
+//				"%u\t%u\t%u\t%u\t"      //Id 184
+//				"%u\t%u\t%u\t%u\t"      //Id 185
+//				"%u\t%u\t%u\t%u\t"      //Id 186
+//				"%u\t%u\t%u\t%u\t"      //Id 187
+//				"%u\t%u\t%u\t%u\n",     //Id 188
+//
+//
+//	    /*Id 180 */	DIA, MES, ANO, HORA_1,
+//		/*Id 181 */ MINUTO_1, HORA_2, MINUTO_2, TEMP,
+//		/*Id 182 */ TEMP_PISTA, TORQUE_ECU, ENDURO, AUTOCROSS,
+//		/*Id 183 */	SKIDPAD, ACELERACAO, BRAKE,
+//
+//		/*Id 184 */	VT, CA ,NENHUM, PNEU_CHUVA,
+//		/*Id 185 */	PNEU_HOOSIER_NOVO, PNEU_HOOSIER_ANTIGO, PNEU_RBC, SECA,
+//		/*Id 186 */ MOLHADA, UMIDA, VACORUJA, ASA,
+//		/*Id 187 */	BICO, ENTRE_EIXOS, PESO_CARRO, PESO_PILOTO,
+//		/*Id 188 */	PRESS_PDD, PRESS_PDE, PRESS_PTD, PRESS_PTE);
+//
+//		fresult = f_open(&file, bufferFile, FA_OPEN_ALWAYS | FA_WRITE); //open file on SD card to write*/
+//		fresult = f_lseek(&file, 0); //goes to beginning of the file (n sei se precisa)
+//		fresult = f_write(&file, condicoes, len, &bytes_written);//write data to the file
+//		fresult = f_close(&file);//closes the file
+//
+//		if(fresult == FR_OK){
+//			_datalog_flag  = 1;
+//		}
+//
+//		PRESS_PTE = 0; //condição de saída
+//	}
+//
+//}
 
 
-			//TENTAR MUDAR O CLOCK DO SDMMC1 PARA 50MHz e 125MHz e ver oq muda********
-		}
-		if(fresult == FR_OK){
-			_datalog_flag  = 1;
-		}
-		else _datalog_flag = 0;
 
-		if(aux != 9)
-			aux++;
-		else
-			aux = 0;
-
-		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_5);
-}
 
 

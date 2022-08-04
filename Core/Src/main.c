@@ -49,6 +49,8 @@
 
 FDCAN_HandleTypeDef hfdcan1;
 
+IWDG_HandleTypeDef hiwdg1;
+
 SD_HandleTypeDef hsd1;
 
 UART_HandleTypeDef huart4;
@@ -58,7 +60,7 @@ extern uint8_t _accel_ok, _datalog_flag;
 uint8_t ubKeyNumber = 0x0;
 //FDCAN_HandleTypeDef hfdcan1;
 //FDCAN_RxHeaderTypeDef RxHeader;
-uint8_t RxData[8];
+//uint8_t RxData[8];
 //FDCAN_TxHeaderTypeDef TxHeader;
 uint8_t TxData[8];
 UART_HandleTypeDef huart4;
@@ -70,6 +72,7 @@ static void MX_GPIO_Init(void);
 static void MX_FDCAN1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_SDMMC1_SD_Init(void);
+static void MX_IWDG1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -110,54 +113,26 @@ int main(void)
   MX_UART4_Init();
   MX_SDMMC1_SD_Init();
   MX_FATFS_Init();
+  MX_IWDG1_Init();
   /* USER CODE BEGIN 2 */
   init_CAN();
   SD_Create_File();
   Cabecalho();
   Clean_CAN_Struct();
+
+
+  HAL_IWDG_Refresh(&hiwdg1);
+
   //uint16_t vet_tx[4]={0,0,0,0};
-  uint16_t id = 0;
+  //uint16_t id = 0;
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
   /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-
-  /* USER CODE END 2 */
-
 
 
   while (1)
@@ -165,11 +140,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  HAL_IWDG_Refresh(&hiwdg1);
+    //Condicoes_Teste();
 	  writeSD();
-	  //writeSDBuffer();
-
-  }
   /* USER CODE END 3 */
+  }
 }
 
 /**
@@ -184,16 +159,19 @@ void SystemClock_Config(void)
   /** Supply configuration update enable
   */
   HAL_PWREx_ConfigSupply(PWR_LDO_SUPPLY);
+
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 1;
@@ -208,6 +186,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -277,6 +256,35 @@ static void MX_FDCAN1_Init(void)
   /* USER CODE BEGIN FDCAN1_Init 2 */
 
   /* USER CODE END FDCAN1_Init 2 */
+
+}
+
+/**
+  * @brief IWDG1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_IWDG1_Init(void)
+{
+
+  /* USER CODE BEGIN IWDG1_Init 0 */
+
+  /* USER CODE END IWDG1_Init 0 */
+
+  /* USER CODE BEGIN IWDG1_Init 1 */
+
+  /* USER CODE END IWDG1_Init 1 */
+  hiwdg1.Instance = IWDG1;
+  hiwdg1.Init.Prescaler = IWDG_PRESCALER_16;
+  hiwdg1.Init.Window = 4095;
+  hiwdg1.Init.Reload = 400;
+  if (HAL_IWDG_Init(&hiwdg1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN IWDG1_Init 2 */
+
+  /* USER CODE END IWDG1_Init 2 */
 
 }
 
@@ -367,12 +375,20 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, CAN_LED_Pin|DATALOG_LED_Pin|ACCEL_LED_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOD, CAN_LED_Pin|GNSS_LED_Pin|DATALOG_LED_Pin|ACCEL_LED_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pins : PB10 PB11 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF4_I2C2;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : CD_Pin */
   GPIO_InitStruct.Pin = CD_Pin;
@@ -380,8 +396,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(CD_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : CAN_LED_Pin DATALOG_LED_Pin ACCEL_LED_Pin */
-  GPIO_InitStruct.Pin = CAN_LED_Pin|DATALOG_LED_Pin|ACCEL_LED_Pin;
+  /*Configure GPIO pins : CAN_LED_Pin GNSS_LED_Pin DATALOG_LED_Pin ACCEL_LED_Pin */
+  GPIO_InitStruct.Pin = CAN_LED_Pin|GNSS_LED_Pin|DATALOG_LED_Pin|ACCEL_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -423,5 +439,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

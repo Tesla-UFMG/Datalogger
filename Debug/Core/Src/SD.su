@@ -1,4 +1,4 @@
-SD.c:25:9:SD_Create_File	16	static
-SD.c:49:6:Cabecalho	1328	static
-SD.c:62:6:writeSD	1752	static
-SD.c:128:6:writeSDBuffer	1248	static
+../Core/Src/SD.c:29:9:SD_Create_File	16	static
+../Core/Src/SD.c:55:6:readSD	80	static
+../Core/Src/SD.c:80:6:Cabecalho	1648	static
+../Core/Src/SD.c:95:6:writeSD	1216	static
