@@ -22,6 +22,6 @@ typedef struct{
 
 void Clean_CAN_Struct(void);
 
-void canMessageReceived(uint16_t id, uint8_t *data);
+void canMessageReceived(uint16_t id, uint16_t *data);
 
 #endif /* CAN_LOG_H_ */

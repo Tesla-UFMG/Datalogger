@@ -29,6 +29,8 @@
 #include "initializers.h"
 #include "SD.h"
 #include "can_log.h"
+#include "application.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -142,7 +144,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  HAL_IWDG_Refresh(&hiwdg1);
     //Condicoes_Teste();
-	  writeSD();
+    application_run();
   /* USER CODE END 3 */
   }
 }

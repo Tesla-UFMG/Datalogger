@@ -43,7 +43,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Middlewares/Third_Party/FatFs/src/ff.h ../FATFS/Target/sd_diskio.h \
  ../Core/Inc/general_can.h ../Core/Inc/initializers.h ../Core/Inc/SD.h \
  ../Core/Inc/main.h ../Core/Inc/can_log.h ../Core/Inc/general_can.h \
- ../Core/Inc/can_log.h
+ ../Core/Inc/can_log.h ../Core/Inc/application.h
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
@@ -98,3 +98,4 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/can_log.h:
 ../Core/Inc/general_can.h:
 ../Core/Inc/can_log.h:
+../Core/Inc/application.h:
