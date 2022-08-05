@@ -1,4 +1,0 @@
-../Core/Src/SD.c:31:9:SD_Create_File	16	static
-../Core/Src/SD.c:56:6:readSD	80	static
-../Core/Src/SD.c:82:6:Cabecalho	1648	static
-../Core/Src/SD.c:121:6:writeSD	1216	static

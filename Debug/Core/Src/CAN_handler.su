@@ -1,2 +1,0 @@
-../Core/Src/CAN_handler.c:9:6:initialize_CAN	16	static
-../Core/Src/CAN_handler.c:28:6:can_transmit	24	static

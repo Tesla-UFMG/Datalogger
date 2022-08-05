@@ -1,2 +1,0 @@
-../Core/Src/can_log.c:13:6:Clean_CAN_Struct	16	static
-../Core/Src/can_log.c:22:6:canMessageReceived	24	static
