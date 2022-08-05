@@ -39,7 +39,7 @@ static void application_state_machine(void) {
         case SD_SAVE: {
             timer_restart(&save_timer);
             writeSD();
-            application_state = SD_SAVE;
+            application_state = CAN_POLL;
 
             break;
         }
