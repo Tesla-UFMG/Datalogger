@@ -63,6 +63,8 @@ void Error_Handler(void);
 #define CD_GPIO_Port GPIOD
 #define CAN_LED_Pin GPIO_PIN_3
 #define CAN_LED_GPIO_Port GPIOD
+#define GNSS_LED_Pin GPIO_PIN_4
+#define GNSS_LED_GPIO_Port GPIOD
 #define DATALOG_LED_Pin GPIO_PIN_5
 #define DATALOG_LED_GPIO_Port GPIOD
 #define ACCEL_LED_Pin GPIO_PIN_6
@@ -76,5 +78,3 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
