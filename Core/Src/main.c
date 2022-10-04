@@ -134,6 +134,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   /* USER CODE END 2 */
 
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  /* USER CODE END 2 */
+
 
   while (1)
   {
@@ -143,8 +147,9 @@ int main(void)
 	  HAL_IWDG_Refresh(&hiwdg1);
     //Condicoes_Teste();
 	  writeSD();
-  /* USER CODE END 3 */
+
   }
+  /* USER CODE END 3 */
 }
 
 /**

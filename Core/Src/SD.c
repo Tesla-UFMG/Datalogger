@@ -82,8 +82,21 @@ void Cabecalho(void)
 	UINT bytes_written;
 	FRESULT fresult;
 
-	char cabecalho[1625];
-	strcpy(cabecalho, "TIMER\tVOL\tACELERADOR\tFREIO\tMODO\tFRENAGEM_REG\tHODOMETRO_P\tHODOMETRO_T\tTORQUE_R\tTORQUE_L\tTORQUE_REF_R_\tTORQUE_REF_L\tSPEED_R_MOTOR\tSPEED_L_MOTOR\tECU_CONTROL_ID\tECU_CONTROL_EVENT_ID\tSPEED_FRONT_L_TIE\tSPEED_FRONT_R_TIE\tSPEED_BACK_R_TIE\tSPEED_BACK_L_TIE\tTORQUE_GAIN\tSENTIDO_VOL\tCORR_TORQUE_R\tCORR_TORQUE_L\tTEMP_INV_1_R\tTEMP_INV_2_R\tTEMP_INV_1_L\tTEMP_INV_2_L\tSPEED_L\tSPEED_R\tPOWER_L\tPOWER_R\tENERGY_L\tENERGY_R\tOVERLOAD_L\tOVERLOAD_R\tLOST_MSG_L\tLOST_MSG_R\tBUS_OFF_L\tBUS_OFF_R\tCAN_STATE_L\tCAN_STATE_R\tINV_STATE_L\tINV_STATE_R\tFALHA_L\tFALHA_R\tALARM_L\tALARM_R\tACCEL_X\tACCEL_Y\tACCEL_Z\tERRO\tGYRO_X\tGYRO_Y\tGYRO_Z\tERROR\tV_MAX\tV_MIN\tDELTA_V\tTEMP_MAX\tMODO_BMS\tBMS_ERROR_FLAG\tCONTATORES_STATUS\tV_TS\tI_SENSOR_1_ALTA\tI_SENSOR_2_BAIXA\tI_SENSOR_2_ALTA\tI_SENSOR_3_BAIXA\tI_SENSOR_3_ALTA\tI_SENSOR_4_BAIXA\tI_SENSOR_4_ALTA\tVCel101\tVCel102\tVCel103\tVCel104\tVCel105\tVCel106\tVCel107\tVCel108\tVCel109\tVCel110\tVCel111\tVCel112\tTemp101\tTemp102\tTemp103\tTemp104\tTemp105\tV_TOT_1\tV_REF_1\tFLAG_BAL_1\tVCel201\tVCel102\tVCel203\tVCel204\tVCel205\tVCel206\tVCel207\tVCel208\tVCel209\tVCel211\tVCel212\tTemp201\tTemp202\tTemp203\tTemp204\tTemp205\tV_TOT_2\tV_REF_2\tFLAG_BAL_2V\tVCel301\tVCel302\tVCel303\tVCel304\tVCel305\tVCel306\tVCel307\tVCel308\tVCel309\tVCel311\tVCel312\tTemp301\tTemp302\tTemp303\tTemp304\tTemp305\tV_TOT_3\tV_REF_3\tFLAG_BAL_3\tVCel401\tVCel402\tVCel403\tVCel404\tVCel405\tVCel406\tVCel407\tVCel408\tVCel409\tVCel410\tVCel411\tVCel412\tTemp401\tTemp402\tTemp403\tTemp404\tTemp405\tV_TOT_4\tV_REF_4\tFLAG_BAL_4\n");
+	char cabecalho[1000];
+	strcpy(cabecalho,   "TIMER\tVOL\tACELERADOR\tFREIO\tMODO\tHODOMETRO_P\tHODOMETRO_"
+	           "T\tTORQUE_R\tTORQUE_L\tTORQUE_REF_R_\tTORQUE_REF_L\tSPEED_R_MOTOR\tSPEED_L_"
+	           "MOTOR\tECU_FLAG_1\tECU_FLAG_2\tSPEED_FRONT_L_TIE\tSPEED_FRONT_"
+	           "R_TIE\tSPEED_BACK_R_TIE\tSPEED_BACK_L_TIE\tTORQUE_GAIN\tSENTIDO_VOL\tCORR_"
+	           "TORQUE_R\tCORR_TORQUE_L\tSPEED_L\tSPEED_R\tPOWER_L\tPOWER_R\tENERGY_L\tENERGY_R\t"
+	           "R\tACCEL_X\tACCEL_Y\tACCEL_Z\tGYRO_X\tGYRO_Y\tGYRO_Z\tV_MAX\tV_"
+	           "MIN\tDELTA_V\tTEMP_MAX\tCONTATORES_STATUS\tV_TS\tI_"
+	           "SENSOR_1_ALTA\tI_SENSOR_2_BAIXA\tI_SENSOR_2_ALTA\tI_SENSOR_3_BAIXA\tI_SENSOR_"
+	           "3_ALTA\tI_SENSOR_4_BAIXA\tI_SENSOR_4_"
+	           "ALTA\tTemp101\tTemp102\tTemp103\tTemp104\tTem"
+	           "p105\tV_TOT_1\tV_REF_1\tTemp201\tTemp202\tTemp203\tTemp204\tTemp205\tV_TOT_"
+	           "2\tV_REF_2\tTemp301\tTemp302\tTemp303\tTemp304\tTemp305\tV_TOT_"
+	           "3\tV_REF_3\tTemp401\tTemp402\tTemp403\tTemp404\tTemp405"
+	           "\tV_TOT_4\tV_REF_4\n");
 	int tamanho = strlen(cabecalho);
 
 
@@ -103,98 +116,87 @@ void writeSD(void)
 	len = snprintf((char*) block, sizeof(block),
 			//1   2   3   4
 			"%lu\t%u\t%u\t%u\t"     //Id 101
-			"%u\t%u\t%u\t%u\t"	    //Id 102
+			"%u\t%u\t"	    //Id 102
 			"%u\t%u\t%u\t%u\t"      //Id 103
 			"%u\t%u\t%u\t%u\t"      //Id 104
 
 			"%u\t%u\t%u\t%u\t"      //Id 105
 			"%u\t%u\t%u\t%u\t"      //Id 106
-			"%u\t%u\t%u\t%u\t"		//Id 107
+			//"%u\t%u\t%u\t%u\t"		Id 107
 			"%u\t%u\t%u\t%u\t"		//Id 109
 
-			"%u\t%u\t%u\t%u\t"		//Id 110
-			"%u\t%u\t%u\t%u\t"      //Id 111
-			"%u\t%u\t%u\t%u\t"		//Id 112
-			"%u\t%u\t%u\t%u\t"		//Id 113
-
-			"%u\t%u\t%u\t%u\t"		//Id 291
-			"%u\t%u\t%u\t%u\t"      //Id 292
+			"%u\t%u\t%u\t"		//Id 291
+			"%u\t%u\t%u\t"      //Id 292
 
 			"%u\t%u\t%u\t%u\t"		//Id 50
-			"%u\t%u\t%u\t%u\t"		//Id 51
+			"%u\t%u\t"		//Id 51
 			"%u\t%u\t%u\t"		    //Id 54
 			"%u\t%u\t%u\t%u\t"		//Id 55
 
-			"%u\t%u\t%u\t%u\t"		//Id 256
-			"%u\t%u\t%u\t%u\t"		//Id 257
-			"%u\t%u\t%u\t%u\t"		//Id 258
+//			"%u\t%u\t%u\t%u\t"		//Id 256
+//			"%u\t%u\t%u\t%u\t"		//Id 257
+//			"%u\t%u\t%u\t%u\t"		//Id 258
 			"%u\t%u\t%u\t%u\t"		//Id 259
-			"%u\t%u\t%u\t%u\t"		//Id 260
+			"%u\t%u\t%u\t"		//Id 260
 
-			"%u\t%u\t%u\t%u\t"		//Id 261
-			"%u\t%u\t%u\t%u\t"		//Id 262
-			"%u\t%u\t%u\t%u\t"		//Id 263
+//			"%u\t%u\t%u\t%u\t"		//Id 261
+//			"%u\t%u\t%u\t%u\t"		//Id 262
+//			"%u\t%u\t%u\t%u\t"		//Id 263
 			"%u\t%u\t%u\t%u\t"		//Id 264
-			"%u\t%u\t%u\t%u\t"		//Id 265
+			"%u\t%u\t%u\t"		//Id 265
 
-			"%u\t%u\t%u\t%u\t"		//Id 266
-			"%u\t%u\t%u\t%u\t"		//Id 267
-			"%u\t%u\t%u\t%u\t"		//Id 268
+//			"%u\t%u\t%u\t%u\t"		//Id 266
+//			"%u\t%u\t%u\t%u\t"		//Id 267
+//			"%u\t%u\t%u\t%u\t"		//Id 268
 			"%u\t%u\t%u\t%u\t"		//Id 269
-			"%u\t%u\t%u\t%u\t"		//Id 270
+			"%u\t%u\t%u\t"		//Id 270
 
-			"%u\t%u\t%u\t%u\t"		//Id 271
-			"%u\t%u\t%u\t%u\t"		//Id 272
-			"%u\t%u\t%u\t%u\t"		//Id 273
+//			"%u\t%u\t%u\t%u\t"		//Id 271
+//			"%u\t%u\t%u\t%u\t"		//Id 272
+//			"%u\t%u\t%u\t%u\t"		//Id 273
 			"%u\t%u\t%u\t%u\t"		//Id 274
-			"%u\t%u\t%u\t%u\n",		//Id 275
+			"%u\t%u\t%u\n",		//Id 275
 
 /*Id 101 */	time, VOLANTE, ACELERADOR, FREIO,
-/*Id 102 */ MODO, FRENAGEM_REG, HODOMETRO_PARCIAL, HODOMETRO_TOTAL,
+/*Id 102 */ MODO, HODOMETRO_PARCIAL, HODOMETRO_TOTAL,
 /*Id 103 */ TORQUE_R, TORQUE_L, REF_TORQUE_R, REF_TORQUE_L,
-/*Id 104 */	SPEED_R_MOTOR, SPEED_L_MOTOR, ECU_CONTROL_ID, ECU_CONTROL_EVENT_ID,
+/*Id 104 */	SPEED_R_MOTOR, SPEED_L_MOTOR, ECU_CONTROL_ID1, ECU_CONTROL_ID2,
 
 /*Id 105 */	SPEED_FRONT_L_TIE, SPEED_FRONT_R_TIE,SPEED_BACK_R_TIE, SPEED_BACK_L_TIE,
 /*Id 106 */	GANHO_TORQUE, SENTIDO_VOLANTE, CORRENTE_TORQUE_R, CORRENTE_TORQUE_L,
-/*Id 107 */ TEMP_INV_1_R, TEMP_INV_2_R, TEMP_INV_1_L, TEMP_INV_2_R,
 /*Id 109 */	SPEED_L,SPEED_R, POWER_L, POWER_R,
 
-/*Id 110 */	ENERGY_L, ENERGY_R, OVERLOAD_L, OVERLOAD_R,
-/*Id 111 */ LOST_MSG_L, LOST_MSG_R, BUS_OFF_L, BUS_OFF_R,
-/*Id 112 */ CAN_STATE_L, CAN_STATE_R, INV_STATE_L, INV_STATE_R,
-/*Id 113 */ FAILURE_L,FALILURE_R, ALARM_L, ALARM_R,
-
-/*Id 291 */	ACCEL_X, ACCEL_Y, ACCEL_Z, ERRO,
-/*Id 292 */	GYRO_X, GYRO_Y, GYRO_Z, ERROR,
+/*Id 291 */	ACCEL_X, ACCEL_Y, ACCEL_Z,
+/*Id 292 */	GYRO_X, GYRO_Y, GYRO_Z,
 
 /*Id 50 */	V_MAX, V_MIN,DELTA_V, TEMP_MAX,
-/*Id 51 */	MODO_BMS, BMS_ERROR_FLAG, CONTATORES_STATUS, V_TS,
+/*Id 51 */	CONTATORES_STATUS, V_TS,
 /*Id 54 */	/*CURRENT_SENSOR_1_BAIXA*/ CURRENT_SENSOR_1_ALTA, CURRENT_SENSOR_2_BAIXA, CURRENT_SENSOR_2_ALTA,
 /*Id 55 */	CURRENT_SENSOR_3_BAIXA, CURRENT_SENSOR_3_ALTA, CURRENT_SENSOR_4_BAIXA, CURRENT_SENSOR_4_ALTA,
 
-/*Id 260 */  V_CELL_PACK1_1, V_CELL_PACK1_2,V_CELL_PACK1_3,V_CELL_PACK1_4,
-/*Id 261 */	V_CELL_PACK1_5, V_CELL_PACK1_6,V_CELL_PACK1_7,V_CELL_PACK1_8,
-/*Id 262 */	V_CELL_PACK1_9, V_CELL_PACK1_10,V_CELL_PACK1_11,V_CELL_PACK1_12,
+///*Id 260 */  V_CELL_PACK1_1, V_CELL_PACK1_2,V_CELL_PACK1_3,V_CELL_PACK1_4,
+///*Id 261 */	V_CELL_PACK1_5, V_CELL_PACK1_6,V_CELL_PACK1_7,V_CELL_PACK1_8,
+///*Id 262 */	V_CELL_PACK1_9, V_CELL_PACK1_10,V_CELL_PACK1_11,V_CELL_PACK1_12,
 /*Id 263 */	TEMP_PACK1_1, TEMP_PACK1_2,TEMP_PACK1_3,TEMP_PACK1_4,
-/*Id 264 */	TEMP_PACK1_5, V_TOT_PACK1, V_REF_PACK1, FLAG_BAL_PACK1,
+/*Id 264 */	TEMP_PACK1_5, V_TOT_PACK1, V_REF_PACK1,
 
-/*Id 265 */  V_CELL_PACK2_1, V_CELL_PACK2_2,V_CELL_PACK2_3,V_CELL_PACK2_4,
-/*Id 266 */	V_CELL_PACK2_5, V_CELL_PACK2_6,V_CELL_PACK2_7,V_CELL_PACK2_8,
-/*Id 267 */	V_CELL_PACK2_9, V_CELL_PACK2_10,V_CELL_PACK2_11,V_CELL_PACK2_12,
+///*Id 265 */  V_CELL_PACK2_1, V_CELL_PACK2_2,V_CELL_PACK2_3,V_CELL_PACK2_4,
+///*Id 266 */	V_CELL_PACK2_5, V_CELL_PACK2_6,V_CELL_PACK2_7,V_CELL_PACK2_8,
+///*Id 267 */	V_CELL_PACK2_9, V_CELL_PACK2_10,V_CELL_PACK2_11,V_CELL_PACK2_12,
 /*Id 268 */	TEMP_PACK2_2, TEMP_PACK2_2,TEMP_PACK2_3,TEMP_PACK2_4,
-/*Id 269 */	TEMP_PACK2_5, V_TOT_PACK2, V_REF_PACK2, FLAG_BAL_PACK2,
+/*Id 269 */	TEMP_PACK2_5, V_TOT_PACK2, V_REF_PACK2,
 
-/*Id 270 */  V_CELL_PACK3_1, V_CELL_PACK3_2,V_CELL_PACK3_3,V_CELL_PACK3_4,
-/*Id 271 */	V_CELL_PACK3_5, V_CELL_PACK3_6,V_CELL_PACK3_7,V_CELL_PACK3_8,
-/*Id 272 */	V_CELL_PACK3_9, V_CELL_PACK3_10,V_CELL_PACK3_11,V_CELL_PACK3_12,
+///*Id 270 */  V_CELL_PACK3_1, V_CELL_PACK3_2,V_CELL_PACK3_3,V_CELL_PACK3_4,
+///*Id 271 */	V_CELL_PACK3_5, V_CELL_PACK3_6,V_CELL_PACK3_7,V_CELL_PACK3_8,
+///*Id 272 */	V_CELL_PACK3_9, V_CELL_PACK3_10,V_CELL_PACK3_11,V_CELL_PACK3_12,
 /*Id 273 */	TEMP_PACK3_1, TEMP_PACK3_2,TEMP_PACK3_3,TEMP_PACK3_4,
-/*Id 274 */	TEMP_PACK3_5, V_TOT_PACK3, V_REF_PACK3, FLAG_BAL_PACK3,
+/*Id 274 */	TEMP_PACK3_5, V_TOT_PACK3, V_REF_PACK3,
 
-/*Id 275 */  V_CELL_PACK4_1, V_CELL_PACK4_2,V_CELL_PACK4_3,V_CELL_PACK4_4,
-/*Id 276 */	V_CELL_PACK4_5, V_CELL_PACK4_6,V_CELL_PACK4_7,V_CELL_PACK4_8,
-/*Id 277 */	V_CELL_PACK4_9, V_CELL_PACK4_10,V_CELL_PACK4_11,V_CELL_PACK4_12,
+///*Id 275 */  V_CELL_PACK4_1, V_CELL_PACK4_2,V_CELL_PACK4_3,V_CELL_PACK4_4,
+///*Id 276 */	V_CELL_PACK4_5, V_CELL_PACK4_6,V_CELL_PACK4_7,V_CELL_PACK4_8,
+///*Id 277 */	V_CELL_PACK4_9, V_CELL_PACK4_10,V_CELL_PACK4_11,V_CELL_PACK4_12,
 /*Id 278 */	TEMP_PACK4_1, TEMP_PACK4_2,TEMP_PACK4_3,TEMP_PACK4_4,
-/*Id 279 */	TEMP_PACK4_5, V_TOT_PACK4, V_REF_PACK4, FLAG_BAL_PACK4);
+/*Id 279 */	TEMP_PACK4_5, V_TOT_PACK4, V_REF_PACK4);
 
 	fresult = f_open(&file, bufferFile, FA_OPEN_ALWAYS | FA_WRITE); //open file on SD card to write*/
 	fresult = f_lseek(&file, file.obj.objsize);//goes to the end of the file

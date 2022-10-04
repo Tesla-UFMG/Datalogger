@@ -42,8 +42,8 @@ void Condicoes_Teste(void);
 
 #define SPEED_R_MOTOR can_vector[104].word_0
 #define SPEED_L_MOTOR can_vector[104].word_1
-#define ECU_CONTROL_ID can_vector[104].word_2
-#define ECU_CONTROL_EVENT_ID can_vector[104].word_3
+#define ECU_CONTROL_ID1 can_vector[104].word_2
+#define ECU_CONTROL_ID2 can_vector[104].word_3
 
 #define SPEED_FRONT_L_TIE can_vector[105].word_0
 #define SPEED_FRONT_R_TIE can_vector[105].word_1
