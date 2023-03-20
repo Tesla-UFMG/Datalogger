@@ -87,8 +87,8 @@ void Cabecalho(void)
 	           "T\tTORQUE_R\tTORQUE_L\tTORQUE_REF_R_\tTORQUE_REF_L\tSPEED_R_MOTOR\tSPEED_L_"
 	           "MOTOR\tECU_FLAG_1\tECU_FLAG_2\tSPEED_FRONT_L_TIE\tSPEED_FRONT_"
 	           "R_TIE\tSPEED_BACK_R_TIE\tSPEED_BACK_L_TIE\tTORQUE_GAIN\tSENTIDO_VOL\tCORR_"
-	           "TORQUE_R\tCORR_TORQUE_L\tSPEED_L\tSPEED_R\tPOWER_L\tPOWER_R\tENERGY_L\tENERGY_R\t"
-	           "R\tACCEL_X\tACCEL_Y\tACCEL_Z\tGYRO_X\tGYRO_Y\tGYRO_Z\tV_MAX\tV_"
+	           "TORQUE_R\tCORR_TORQUE_L\tSPEED_L\tSPEED_R\tPOWER_L\tPOWER_R\t"
+	           "ACCEL_X\tACCEL_Y\tACCEL_Z\tGYRO_X\tGYRO_Y\tGYRO_Z\tV_MAX\tV_"
 	           "MIN\tDELTA_V\tTEMP_MAX\tCONTATORES_STATUS\tV_TS\tI_"
 	           "SENSOR_1_ALTA\tI_SENSOR_2_BAIXA\tI_SENSOR_2_ALTA\tI_SENSOR_3_BAIXA\tI_SENSOR_"
 	           "3_ALTA\tI_SENSOR_4_BAIXA\tI_SENSOR_4_"
@@ -116,7 +116,7 @@ void writeSD(void)
 	len = snprintf((char*) block, sizeof(block),
 			//1   2   3   4
 			"%lu\t%u\t%u\t%u\t"     //Id 101
-			"%u\t%u\t"	    //Id 102
+			"%u\t%u\t%u\t"	    //Id 102
 			"%u\t%u\t%u\t%u\t"      //Id 103
 			"%u\t%u\t%u\t%u\t"      //Id 104
 
