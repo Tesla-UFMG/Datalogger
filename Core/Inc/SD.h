@@ -21,6 +21,7 @@ FRESULT SD_Create_File();
 void writeSD(void);
 void readSD(void);
 
+void SD_Placa_Inicializada();
 void Cabecalho(void);
 void Condicoes_Teste(void);
 

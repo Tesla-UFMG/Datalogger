@@ -116,8 +116,11 @@ int main(void)
   MX_IWDG1_Init();
   /* USER CODE BEGIN 2 */
   init_CAN();
-  SD_Create_File();
-  Cabecalho();
+
+  SD_Placa_Inicializada();
+
+  //SD_Create_File();
+  //Cabecalho();
   Clean_CAN_Struct();
 
 
@@ -147,6 +150,8 @@ int main(void)
 	  HAL_IWDG_Refresh(&hiwdg1);
     //Condicoes_Teste();
 	  writeSD();
+	  //SD_Placa_Inicializada();
+	  HAL_Delay(100);
 
   }
   /* USER CODE END 3 */

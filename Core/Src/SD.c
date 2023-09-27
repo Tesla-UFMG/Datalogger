@@ -16,11 +16,14 @@ extern CanIdData_t can_vector[CAN_IDS_NUMBER];
 static FATFS g_sFatFs;
 FIL file;
 FIL file1;
-char bufferFile[20];//buffer with the name of the file
+// Forcando tudo ser salvo em apenas  um arquivo
+char bufferFile[20] = "ARQ00.csv";//buffer with the name of the file
 int count = 0;
 uint8_t _datalog_flag = 0;
 
 int aux;
+
+uint64_t num_resets = 0;
 
 extern IWDG_HandleTypeDef hiwdg1;
 
@@ -63,7 +66,7 @@ void readSD(void)
 		FRESULT fresult;
 		uint16_t ultima_linha[25];
 
-		sprintf(bufferFile, "ARQ%02d.csv", aux);
+		//sprintf(bufferFile, "ARQ%02d.csv", aux);
 		fresult = f_stat(bufferFile, &file1);
 
 		fresult = f_open(&file1, bufferFile, FA_OPEN_ALWAYS | FA_READ); //open file on SD card to write*/
@@ -99,7 +102,7 @@ void Cabecalho(void)
 	           "3\tV_REF_3\tTemp401\tTemp402\tTemp403\tTemp404\tTemp405"
 	           "\tV_TOT_4\tV_REF_4\n");*/
 
-	strcpy(cabecalho,   "sep = ,\ntime, "
+	strcpy(cabecalho,   "sep = ,\ntime, Numero_Resets "
 
 			"Velocidade_Media, Volante, Acelerador,"
 
@@ -179,6 +182,30 @@ void Cabecalho(void)
 	fresult = f_close(&file);
 }
 
+void SD_Placa_Inicializada(void)
+{
+	FRESULT fresult;
+	//fresult = f_mount(&g_sFatFs, "0:", 0);	/*mount SD card*/
+    FILINFO fno;
+	fresult = f_mount(&g_sFatFs, "0:", 0);	/*mount SD card*/
+
+	fresult = f_stat(bufferFile, &fno);
+
+	if (fresult ==  FR_NO_FILE)
+	{
+		// Criar arquivo
+		SD_Create_File();
+		Cabecalho();
+	}
+	else
+	{
+		num_resets += 1;
+		readSD();
+	}
+
+
+}
+
 void writeSD(void)
 {
 	UINT bytes_written;
@@ -188,7 +215,7 @@ void writeSD(void)
 	uint32_t time = HAL_GetTick();
 
 	len = snprintf((char*) block, sizeof(block),
-			"%lu,"
+			"%lu, %u"
 
 			"%u,%u,%u,%u,"
 
@@ -263,7 +290,7 @@ void writeSD(void)
 			"%u,%u,%u,%u,"
 			"%u,%u,%u,%u,"
 			"%u,%u,%u,%u,\n",
-			time,
+			time, num_resets,
 			Velocidade_Media, Volante, Acelerador, Freio,
 			Modo, Ganho_Torque, Hodometro_P, Hodometro_T,
 			Flag_Erro_ECU, Flag_Status, Referencia_MD, Referencia_ME,
