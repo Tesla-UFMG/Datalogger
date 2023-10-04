@@ -102,7 +102,7 @@ void Cabecalho(void)
 	           "3\tV_REF_3\tTemp401\tTemp402\tTemp403\tTemp404\tTemp405"
 	           "\tV_TOT_4\tV_REF_4\n");*/
 
-	strcpy(cabecalho,   "sep = ,\ntime,
+	strcpy(cabecalho,   "sep = ,\ntime,"
 			"Ten_P1_C1, Ten_P1_C2, Ten_P1_C3, Ten_P1_C4,"
 			" Ten_P1_C5, Ten_P1_C6, Ten_P1_C7, Ten_P1_C8,"
 			" Ten_P1_C9, Ten_P1_C10, Ten_P1_C11, Ten_P1_C12,"
