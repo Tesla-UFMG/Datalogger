@@ -16,8 +16,7 @@ extern CanIdData_t can_vector[CAN_IDS_NUMBER];
 static FATFS g_sFatFs;
 FIL file;
 FIL file1;
-// Forcando tudo ser salvo em apenas  um arquivo
-char bufferFile[20] = "ARQ00.csv";//buffer with the name of the file
+char bufferFile[20];//buffer with the name of the file
 int count = 0;
 uint8_t _datalog_flag = 0;
 
@@ -66,7 +65,7 @@ void readSD(void)
 		FRESULT fresult;
 		uint16_t ultima_linha[25];
 
-		//sprintf(bufferFile, "ARQ%02d.csv", aux);
+		sprintf(bufferFile, "ARQ%02d.csv", aux);
 		fresult = f_stat(bufferFile, &file1);
 
 		fresult = f_open(&file1, bufferFile, FA_OPEN_ALWAYS | FA_READ); //open file on SD card to write*/
@@ -102,7 +101,22 @@ void Cabecalho(void)
 	           "3\tV_REF_3\tTemp401\tTemp402\tTemp403\tTemp404\tTemp405"
 	           "\tV_TOT_4\tV_REF_4\n");*/
 
-	strcpy(cabecalho,   "sep = ,\ntime,"
+	strcpy(cabecalho,   "sep = ,\ntime, "
+
+			"Velocidade_Media, Volante, Acelerador,"
+
+			"Freio, Modo, Ganho_Torque, Hodometro_P, Hodometro_T,"
+
+			"Flag_Erro_ECU, Flag_Status, Referencia_MD, Referencia_ME,"
+
+			"Frenagem_Regen,"
+
+			"Tensao_Max, Tensao_Min, Var_Tensao, Temp_Max,"
+
+			"Modo_BMS, Flag_Erro_BMS, Contatores, Tensao_Trat,"
+
+			"Corr_1_Alta, Corr_2_Alta,"
+
 			"Ten_P1_C1, Ten_P1_C2, Ten_P1_C3, Ten_P1_C4,"
 			" Ten_P1_C5, Ten_P1_C6, Ten_P1_C7, Ten_P1_C8,"
 			" Ten_P1_C9, Ten_P1_C10, Ten_P1_C11, Ten_P1_C12,"
@@ -167,7 +181,21 @@ void writeSD(void)
 	uint32_t time = HAL_GetTick();
 
 	len = snprintf((char*) block, sizeof(block),
-			"%lu"
+			"%lu,"
+
+			"%u,%u,%u,%u,"
+
+			"%u,%u,%u,%u,"
+
+			"%u,%u,%u,%u,"
+
+			"%u,"
+
+			"%u,%u,%u,%u,"
+
+			"%u,%u,%u,%u,"
+
+			"%u,%u,"
 
 			"%u,%u,%u,%u,"
 			"%u,%u,%u,%u,"
@@ -193,6 +221,13 @@ void writeSD(void)
 			"%u,%u,%u,%u,"
 			"%u,%u,%u,%u,\n",
 			time,
+			Velocidade_Media, Volante, Acelerador, Freio,
+			Modo, Ganho_Torque, Hodometro_P, Hodometro_T,
+			Flag_Erro_ECU, Flag_Status, Referencia_MD, Referencia_ME,
+			Frenagem_Regen,
+			Tensao_Max, Tensao_Min,Var_Tensao, Temp_Max,
+			Modo_BMS, Flag_Erro_BMS, Contatores, Tensao_Trat,
+			Corr_1_Alta, Corr_2_Alta,
 			Ten_P1_C1, Ten_P1_C2, Ten_P1_C3, Ten_P1_C4,
 			Ten_P1_C5, Ten_P1_C6, Ten_P1_C7, Ten_P1_C8,
 			Ten_P1_C9, Ten_P1_C10, Ten_P1_C11, Ten_P1_C12,
@@ -274,7 +309,6 @@ void writeSD(void)
 //	}
 //
 //}
-
 
 
 
