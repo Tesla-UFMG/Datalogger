@@ -102,55 +102,7 @@ void Cabecalho(void)
 	           "3\tV_REF_3\tTemp401\tTemp402\tTemp403\tTemp404\tTemp405"
 	           "\tV_TOT_4\tV_REF_4\n");*/
 
-	strcpy(cabecalho,   "sep = ,\ntime, Numero_Resets "
-
-			"Velocidade_Media, Volante, Acelerador,"
-
-			"Freio, Modo, Ganho_Torque, Hodometro_P, Hodometro_T,"
-
-			"Flag_Erro_ECU, Flag_Status, Referencia_MD, Referencia_ME,"
-
-			"Velocidade_DE, Velocidade_DD, Velocidade_TE, Velocidade_TD,"
-
-			"Red_Toque_RE, Red_Torque_RD,Controle_D1\,Controle_D2,"
-
-			"Frenagem_Regen, IMU_BSE, IMU_Vel,"
-
-			"Vel_ME,Torq_ME, Pot_ME, Corre_ME,"
-
-			"Energia_ME, SobreCarga_ME, Temp1_ME, Temp2_ME,"
-
-			"MsgPerdida_ME, Busoff_ME, Est_CAN_ME,"
-
-			"Est_Inv_ME, Falha_ME, Alarme_ME,"
-
-			"Vel_MD, Torq_MD,Pot_MD, Corre_MD,"
-
-			"Energia_MD, SobreCarga_MD, Temp1_MD,Temp2_MD,"
-
-			"MsgPerdida_MD, Busoff_MD, Est_CAN_MD,"
-
-			"Est_Inv_MD, Falha_MD, Alarme_MD,"
-
-			"Acel_X, Acel_Y, Acel_Z, IMU_Temp,"
-
-			"Giros_X, Giros_Y, Giros_Z, Erro_IMU,"
-
-			"Beacon,"
-
-			"Pressao_D, Pressao_T, Brake_Bias, Hodo_P_Aq,"
-
-			"Data_Status,"
-
-			"Tensao_Max, Tensao_Min, Var_Tensao, Temp_Max,"
-
-			"Modo_BMS, Flag_Erro_BMS, Contatores, Tensao_Trat,"
-
-			"Corr_1_Alta, Corr_2_Alta,"
-
-			"Carga_Atual, Soc_Inicial, Carga_Int, Temp_Med,"
-
-			"Val_SoC,"
+	strcpy(cabecalho,   "sep = ,\ntime,
 			"Ten_P1_C1, Ten_P1_C2, Ten_P1_C3, Ten_P1_C4,"
 			" Ten_P1_C5, Ten_P1_C6, Ten_P1_C7, Ten_P1_C8,"
 			" Ten_P1_C9, Ten_P1_C10, Ten_P1_C11, Ten_P1_C12,"
@@ -215,57 +167,7 @@ void writeSD(void)
 	uint32_t time = HAL_GetTick();
 
 	len = snprintf((char*) block, sizeof(block),
-			"%lu, %u"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,"
-
-			"%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,%u,"
-
-			"%u,%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,%u,"
-
-			"%u,%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,%u,"
-
-			"%u,%u,%u,%u,"
-
-			"%u,"
+			"%lu"
 
 			"%u,%u,%u,%u,"
 			"%u,%u,%u,%u,"
@@ -290,32 +192,7 @@ void writeSD(void)
 			"%u,%u,%u,%u,"
 			"%u,%u,%u,%u,"
 			"%u,%u,%u,%u,\n",
-			time, num_resets,
-			Velocidade_Media, Volante, Acelerador, Freio,
-			Modo, Ganho_Torque, Hodometro_P, Hodometro_T,
-			Flag_Erro_ECU, Flag_Status, Referencia_MD, Referencia_ME,
-			Velocidade_DE,Velocidade_DD, Velocidade_TE, Velocidade_TD,
-			Red_Toque_RE, Red_Torque_RD,Controle_D1, Controle_D2,
-			Frenagem_Regen,
-			IMU_BSE, IMU_Vel,
-			Vel_ME,Torq_ME, Pot_ME, Corre_ME,
-			Energia_ME, SobreCarga_ME, Temp1_ME, Temp2_ME,
-			MsgPerdida_ME, Busoff_ME, Est_CAN_ME,
-			Est_Inv_ME, Falha_ME, Alarme_ME,
-			Vel_MD, Torq_MD,Pot_MD, Corre_MD,
-			Energia_MD, SobreCarga_MD, Temp1_MD,Temp2_MD,
-			MsgPerdida_MD, Busoff_MD,Est_CAN_MD,
-			Est_Inv_MD, Falha_MD, Alarme_MD,
-			Acel_X, Acel_Y, Acel_Z, IMU_Temp,
-			Giros_X, Giros_Y, Giros_Z, Erro_IMU,
-			Beacon,
-			Pressao_D, Pressao_T, Brake_Bias,Hodo_P_Aq,
-			Data_Status,
-			Tensao_Max, Tensao_Min,Var_Tensao, Temp_Max,
-			Modo_BMS, Flag_Erro_BMS, Contatores, Tensao_Trat,
-			Corr_1_Alta, Corr_2_Alta,
-			Carga_Atual,Soc_Inicial, Carga_Int, Temp_Med,
-			Val_SoC,
+			time,
 			Ten_P1_C1, Ten_P1_C2, Ten_P1_C3, Ten_P1_C4,
 			Ten_P1_C5, Ten_P1_C6, Ten_P1_C7, Ten_P1_C8,
 			Ten_P1_C9, Ten_P1_C10, Ten_P1_C11, Ten_P1_C12,

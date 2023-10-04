@@ -151,7 +151,7 @@ int main(void)
     //Condicoes_Teste();
 	  writeSD();
 	  //SD_Placa_Inicializada();
-	  //HAL_Delay(100);
+	  HAL_Delay(100);
 
   }
   /* USER CODE END 3 */
