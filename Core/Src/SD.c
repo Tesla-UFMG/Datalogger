@@ -111,6 +111,8 @@ void Cabecalho(void)
 
 			"Frenagem_Regen,"
 
+			"Torq_MD, Torq_ME,"
+
 			"Tensao_Max, Tensao_Min, Var_Tensao, Temp_Max,"
 
 			"Modo_BMS, Flag_Erro_BMS, Contatores, Tensao_Trat,"
@@ -191,6 +193,8 @@ void writeSD(void)
 
 			"%u,"
 
+			"%u,%u,"
+
 			"%u,%u,%u,%u,"
 
 			"%u,%u,%u,%u,"
@@ -224,10 +228,15 @@ void writeSD(void)
 			Velocidade_Media, Volante, Acelerador, Freio,
 			Modo, Ganho_Torque, Hodometro_P, Hodometro_T,
 			Flag_Erro_ECU, Flag_Status, Referencia_MD, Referencia_ME,
+
 			Frenagem_Regen,
+
+			Torq_MD, Torq_ME,
+
 			Tensao_Max, Tensao_Min,Var_Tensao, Temp_Max,
 			Modo_BMS, Flag_Erro_BMS, Contatores, Tensao_Trat,
 			Corr_1_Alta, Corr_2_Alta,
+
 			Ten_P1_C1, Ten_P1_C2, Ten_P1_C3, Ten_P1_C4,
 			Ten_P1_C5, Ten_P1_C6, Ten_P1_C7, Ten_P1_C8,
 			Ten_P1_C9, Ten_P1_C10, Ten_P1_C11, Ten_P1_C12,
