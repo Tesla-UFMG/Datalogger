@@ -16,7 +16,7 @@ extern CanIdData_t can_vector[CAN_IDS_NUMBER];
 static FATFS g_sFatFs;
 FIL file;
 FIL file1;
-char bufferFile[20];//buffer with the name of the file
+char bufferFile[20] = "ARQ00.csv";//buffer with the name of the file
 int count = 0;
 uint8_t _datalog_flag = 0;
 
@@ -65,7 +65,10 @@ void readSD(void)
 		FRESULT fresult;
 		uint16_t ultima_linha[25];
 
-		sprintf(bufferFile, "ARQ%02d.csv", aux);
+		//sprintf(bufferFile, "ARQ%02d.csv", aux);
+		fresult = f_stat(bufferFile, &file1);
+
+
 		fresult = f_stat(bufferFile, &file1);
 
 		fresult = f_open(&file1, bufferFile, FA_OPEN_ALWAYS | FA_READ); //open file on SD card to write*/
@@ -110,6 +113,8 @@ void Cabecalho(void)
 			"Flag_Erro_ECU, Flag_Status, Referencia_MD, Referencia_ME,"
 
 			"Frenagem_Regen,"
+
+			"Torq_MD, Torq_ME,"
 
 			"Tensao_Max, Tensao_Min, Var_Tensao, Temp_Max,"
 
@@ -191,6 +196,8 @@ void writeSD(void)
 
 			"%u,"
 
+			"%u,%u,"
+
 			"%u,%u,%u,%u,"
 
 			"%u,%u,%u,%u,"
@@ -224,10 +231,15 @@ void writeSD(void)
 			Velocidade_Media, Volante, Acelerador, Freio,
 			Modo, Ganho_Torque, Hodometro_P, Hodometro_T,
 			Flag_Erro_ECU, Flag_Status, Referencia_MD, Referencia_ME,
+
 			Frenagem_Regen,
+
+			Torq_MD, Torq_ME,
+
 			Tensao_Max, Tensao_Min,Var_Tensao, Temp_Max,
 			Modo_BMS, Flag_Erro_BMS, Contatores, Tensao_Trat,
 			Corr_1_Alta, Corr_2_Alta,
+
 			Ten_P1_C1, Ten_P1_C2, Ten_P1_C3, Ten_P1_C4,
 			Ten_P1_C5, Ten_P1_C6, Ten_P1_C7, Ten_P1_C8,
 			Ten_P1_C9, Ten_P1_C10, Ten_P1_C11, Ten_P1_C12,
